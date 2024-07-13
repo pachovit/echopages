@@ -33,13 +33,15 @@ class DigestDeliverySystem(abc.ABC):
 
 
 class Scheduler(abc.ABC):
+    @abc.abstractmethod
     def __init__(
-        self, function: Callable[[], None], time_of_day: Optional[str] = None
+        self,
+        function: Callable[[], None],
+        time_of_day: Optional[str] = None,
+        time_zone: str = "Europe/Berlin",
+        sleep_interval: float = 1.0,
     ) -> None:
-        if time_of_day is None:
-            time_of_day = "00:00"
-        self.function = function
-        self.configure_schedule(time_of_day)
+        pass
 
     @abc.abstractmethod
     def configure_schedule(self, time_of_day: str) -> None:
@@ -47,4 +49,8 @@ class Scheduler(abc.ABC):
 
     @abc.abstractmethod
     def start(self) -> None:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def stop(self) -> None:
         raise NotImplementedError
