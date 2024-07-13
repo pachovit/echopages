@@ -7,13 +7,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+schedule = "^1.2.2"
+pytz = "^2024.1"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
 pytestarch = "^3.0.0"
-freezegun = "^1.5.1"
 pytest-cov = "^5.0.0"
+time-machine = "^2.14.2"
 
 [build-system]
 requires = ["poetry-core"]
