@@ -18,7 +18,9 @@ def test_scheduler_works_on_time():
     original_time = datetime(2020, 1, 1, 6, 59, 59, tzinfo=zone)
     with travel(original_time, tick=False) as traveller:
         # Given: A scheduler and some digests
-        scheduler = schedulers.SimpleScheduler(dummy_function, "07:00")
+        scheduler = schedulers.SimpleScheduler(
+            dummy_function, "07:00", sleep_interval=0.05
+        )
         assert DummyClass.value == 0
 
         # When: Schedule time arrives

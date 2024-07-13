@@ -140,7 +140,8 @@ def test_all_flow():
         scheduler = schedulers.SimpleScheduler(
             lambda: services.delivery_service(
                 digest_repo, content_repo, content_sampler, 1, delivery_system
-            )
+            ),
+            sleep_interval=0.05,
         )
         services.configure_schedule(scheduler, "07:00")
         scheduler.start()
