@@ -11,3 +11,7 @@
   * Schedule is configured to every second
   * Do 4 deliveries of 1 content unit each
   * Assert 4 deliveries make sense
+
+
+## TODO:
+* Configure the number of content units in the digest

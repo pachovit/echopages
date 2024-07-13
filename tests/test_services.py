@@ -1,4 +1,9 @@
+from datetime import datetime, timedelta
+from time import sleep
 from typing import List
+
+from time_machine import travel
+from zoneinfo import ZoneInfo
 
 from echopages.application import services
 from echopages.domain import model, repositories
@@ -31,10 +36,15 @@ class FakeDigestRepository(repositories.DigestRepository):
 
 
 class FakeDigestDeliverySystem(model.DigestDeliverySystem):
-    sent_contents = ""
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.sent_contents = []
 
     def deliver_digest(self, digest: model.Digest) -> None:
-        self.sent_contents = ",".join([content.data for content in digest.contents])
+        self.sent_contents.append(
+            ",".join([content.data for content in digest.contents])
+        )
 
 
 def test_user_can_add_content_units():
@@ -59,15 +69,13 @@ def test_user_can_add_content_units():
 def test_configure_schedule():
     # Given: Some schedule
     scheduler = schedulers.SimpleScheduler(lambda: None)
-    assert scheduler.schedule.time_of_day.hour == 0
-    assert scheduler.schedule.time_of_day.minute == 0
+    assert scheduler.time_of_day == "00:00"
 
     # When: User configures schedule
     services.configure_schedule(scheduler, "07:00")
 
     # Then: Schedule is changed
-    assert scheduler.schedule.time_of_day.hour == 7
-    assert scheduler.schedule.time_of_day.minute == 0
+    assert scheduler.time_of_day == "07:00"
 
 
 def test_generate_digest():
@@ -106,7 +114,48 @@ def test_send_digest():
     services.send_digest(delivery_system, digest_repo, "d1")
 
     digests = digest_repo.get_all()
-    assert (
-        delivery_system.sent_contents == "content unit 1,content unit 2,content unit 3"
-    )
+    assert delivery_system.sent_contents == [
+        "content unit 1,content unit 2,content unit 3"
+    ]
     assert digests[0].sent is True
+
+
+def test_all_flow():
+    content_repo = FakeContentRepository([])
+    digest_repo = FakeDigestRepository([])
+    delivery_system = FakeDigestDeliverySystem()
+    content_sampler = samplers.SimpleContentSampler()
+
+    # Populate contents
+    services.add_content(content_repo, "content unit 1")
+    services.add_content(content_repo, "content unit 2")
+    assert len(digest_repo.get_all()) == 0
+
+    # Let the scheduler do 4 deliveries
+    with travel(
+        datetime(2020, 1, 1, 19, 0, 0, tzinfo=ZoneInfo("Europe/Berlin")),
+        tick=False,
+    ) as traveller:
+        # Configure Scheduler
+        scheduler = schedulers.SimpleScheduler(
+            lambda: services.delivery_service(
+                digest_repo, content_repo, content_sampler, 1, delivery_system
+            )
+        )
+        services.configure_schedule(scheduler, "07:00")
+        scheduler.start()
+
+        # Move time forward to trigger 4 deliveries
+        for _ in range(4):
+            traveller.shift(delta=timedelta(days=1))
+            sleep(0.1)
+        scheduler.stop()
+
+        assert len(digest_repo.get_all()) == 4
+        assert len(delivery_system.sent_contents) == 4
+        assert delivery_system.sent_contents == [
+            "content unit 1",
+            "content unit 2",
+            "content unit 1",
+            "content unit 2",
+        ]

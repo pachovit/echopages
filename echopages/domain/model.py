@@ -1,6 +1,4 @@
 import abc
-import datetime
-from dataclasses import dataclass, field
 from typing import Callable, List, Optional
 
 
@@ -34,39 +32,18 @@ class DigestDeliverySystem(abc.ABC):
         raise NotImplementedError
 
 
-@dataclass
-class Schedule:
-    days_of_week: List[int]  # Monday=0, Sunday=6
-    time_of_day_str: str
-    time_of_day: datetime.time = field(init=False)
-
-    def __post_init__(self):
-        self.time_of_day = self.parse_time(self.time_of_day_str)
-        # Validate days_of_week to ensure no invalid days are set
-        if any(day < 0 or day > 6 for day in self.days_of_week):
-            raise ValueError(
-                "days_of_week must be integers from 0 (Monday) to 6 (Sunday)."
-            )
-
-    @staticmethod
-    def parse_time(time_str: str) -> datetime.time:
-        """Parse a time string in HH:MM format to a datetime.time object."""
-        return datetime.datetime.strptime(time_str, "%H:%M").time()
-
-
 class Scheduler(abc.ABC):
     def __init__(
-        self, function: Callable[[], None], schedule: Optional[Schedule] = None
+        self, function: Callable[[], None], time_of_day: Optional[str] = None
     ) -> None:
-        if schedule is None:
-            schedule = Schedule(
-                days_of_week=[0, 1, 2, 3, 4, 5, 6], time_of_day_str="00:00"
-            )
-        self.schedule = schedule
+        if time_of_day is None:
+            time_of_day = "00:00"
         self.function = function
+        self.configure_schedule(time_of_day)
 
-    def configure_schedule(self, schedule: str) -> None:
-        self.schedule = schedule
+    @abc.abstractmethod
+    def configure_schedule(self, time_of_day: str) -> None:
+        raise NotImplementedError
 
     @abc.abstractmethod
     def start(self) -> None:

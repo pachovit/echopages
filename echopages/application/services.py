@@ -8,11 +8,8 @@ def add_content(content_repo: repositories.ContentRepository, content: str) -> N
     content_repo.add(model.ContentUnit(id=str(uuid.uuid4()), data=content))
 
 
-def configure_schedule(scheduler: model.Scheduler, time_of_day_str: str) -> None:
-    schedule = model.Schedule(
-        days_of_week=[0, 1, 2, 3, 4, 5, 6], time_of_day_str=time_of_day_str
-    )
-    scheduler.configure_schedule(schedule)
+def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
+    scheduler.configure_schedule(time_of_day)
 
 
 def sample_contents(
@@ -46,3 +43,16 @@ def send_digest(
     digest = digest_repo.get(digest_id)
     digest_delivery_system.deliver_digest(digest)
     digest.mark_as_sent()
+
+
+def delivery_service(
+    digest_repo: repositories.DigestRepository,
+    content_repo: repositories.ContentRepository,
+    content_sampler: model.ContentSampler,
+    number_of_units: int,
+    digest_delivery_system: model.DigestDeliverySystem,
+) -> None:
+    digest_id = generate_digest(
+        digest_repo, content_repo, content_sampler, number_of_units
+    )
+    send_digest(digest_delivery_system, digest_repo, digest_id)
