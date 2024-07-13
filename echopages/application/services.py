@@ -8,6 +8,13 @@ def add_content(content_repo: repositories.ContentRepository, content: str) -> N
     content_repo.add(model.ContentUnit(id=str(uuid.uuid4()), data=content))
 
 
+def configure_schedule(scheduler: model.Scheduler, time_of_day_str: str) -> None:
+    schedule = model.Schedule(
+        days_of_week=[0, 1, 2, 3, 4, 5, 6], time_of_day_str=time_of_day_str
+    )
+    scheduler.configure_schedule(schedule)
+
+
 def sample_contents(
     content_repo: repositories.ContentRepository,
     content_sampler: model.ContentSampler,
