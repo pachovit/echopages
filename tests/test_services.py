@@ -2,7 +2,7 @@ from typing import List
 
 from echopages.application import services
 from echopages.domain import model, repositories
-from echopages.infrastructure import samplers
+from echopages.infrastructure import samplers, schedulers
 
 
 class FakeContentRepository(repositories.ContentRepository):
@@ -54,6 +54,20 @@ def test_user_can_add_content_units():
     assert {"content unit 1", "content unit 2", "content unit 3"} == set(
         content.data for content in available_content
     )
+
+
+def test_configure_schedule():
+    # Given: Some schedule
+    scheduler = schedulers.SimpleScheduler(lambda: None)
+    assert scheduler.schedule.time_of_day.hour == 0
+    assert scheduler.schedule.time_of_day.minute == 0
+
+    # When: User configures schedule
+    services.configure_schedule(scheduler, "07:00")
+
+    # Then: Schedule is changed
+    assert scheduler.schedule.time_of_day.hour == 7
+    assert scheduler.schedule.time_of_day.minute == 0
 
 
 def test_generate_digest():

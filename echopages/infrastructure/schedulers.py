@@ -1,19 +1,16 @@
 from datetime import datetime
 from threading import Thread
-from typing import Callable
+from typing import Callable, Optional
+
+from echopages.domain import model
 
 
-class Scheduler:
-    def __init__(self, function: Callable[[], None], schedule: str):
-        self.scheduled_time = datetime.strptime(schedule, "%H:%M")
-        self.function = function
+class SimpleScheduler(model.Scheduler):
+    def __init__(
+        self, function: Callable[[], None], schedule: Optional[model.Schedule] = None
+    ):
+        super().__init__(function, schedule)
         self.function_called = False
-
-    def get_schedule(self) -> str:
-        return self.scheduled_time
-
-    def configure_schedule(self, schedule: str):
-        self.scheduled_time = datetime.strptime(schedule, "%H:%M")
 
     def start(self):
         thread = Thread(target=self._start)
@@ -25,8 +22,8 @@ class Scheduler:
             now = datetime.now()
             # Check if the current time is within a minute range of the scheduled time
             if (
-                now.hour == self.scheduled_time.hour
-                and now.minute == self.scheduled_time.minute
+                now.hour == self.schedule.time_of_day.hour
+                and now.minute == self.schedule.time_of_day.minute
             ):
                 self.function()
                 self.function_called = True

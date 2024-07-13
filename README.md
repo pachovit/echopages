@@ -1,12 +1,13 @@
 # Echo Pages
 
 ## Features:
-* A user configures a _Digest Schedule_ that determines when to receive _Digests_
-* A user can add _Content Units_ to their account
-* A _Digest_ is sent according to the _Digest Schedule_ with sampled _Content Units_
+* Configure daily schedule
+* Add content
+* Digest is delivered
 
 ## Next:
-* Put fakes in the tests only
-* Reorganize entities and frameworks in different modules
-* Mypy?
-* New files include them in arch
+* First integration tests:
+  * 2 contents units are added
+  * Schedule is configured to every second
+  * Do 4 deliveries of 1 content unit each
+  * Assert 4 deliveries make sense
