@@ -15,7 +15,6 @@ class SimpleScheduler(model.Scheduler):
         time_zone: str = "Europe/Berlin",
         sleep_interval: float = 1.0,
     ):
-        super().__init__(function, time_of_day)
         if time_of_day is None:
             time_of_day = "00:00"
         self.function = function

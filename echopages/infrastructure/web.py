@@ -36,7 +36,7 @@ async def add_content(
 
 @app.get("/contents/{content_id}", response_model=GetContentResponse)
 async def get_content(
-    content_id: str,
+    content_id: int,
     content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
 ):
     content = content_repo.get_by_id(content_id)

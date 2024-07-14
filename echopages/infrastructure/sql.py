@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -23,10 +23,10 @@ class SQLContentRepository(ContentRepository):
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    def get_by_id(self, content_id: str) -> model.Content:
+    def get_by_id(self, content_id: int) -> Optional[model.Content]:
         return (
             self.db_session.query(model.Content)
-            .filter(model.Content.id == content_id)
+            .filter(model.Content.id == content_id)  # type: ignore
             .first()
         )
 
@@ -36,4 +36,5 @@ class SQLContentRepository(ContentRepository):
     def add(self, content: model.Content) -> int:
         self.db_session.add(content)
         self.db_session.commit()
+        assert content.id is not None
         return content.id

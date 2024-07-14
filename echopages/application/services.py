@@ -1,10 +1,9 @@
-import uuid
 from typing import List
 
 from echopages.domain import model, repositories
 
 
-def add_content(content_repo: repositories.ContentRepository, content: str) -> str:
+def add_content(content_repo: repositories.ContentRepository, content: str) -> int:
     content_id = content_repo.add(model.Content(text=content))
     return content_id
 
@@ -27,21 +26,23 @@ def generate_digest(
     content_repo: repositories.ContentRepository,
     content_sampler: model.ContentSampler,
     number_of_units: int,
-) -> str:
+) -> int:
     contents = sample_contents(content_repo, content_sampler, number_of_units)
 
-    digest = model.Digest(id=str(uuid.uuid4()), contents=contents)
-    digest_repo.add(digest)
+    digest = model.Digest(contents=contents)
+    digest_id = digest_repo.add(digest)
 
-    return digest.id
+    return digest_id
 
 
 def send_digest(
     digest_delivery_system: model.DigestDeliverySystem,
     digest_repo: repositories.DigestRepository,
-    digest_id: str,
+    digest_id: int,
 ) -> None:
     digest = digest_repo.get_by_id(digest_id)
+    if digest is None:
+        raise ValueError(f"Digest with id {digest_id} not found")
     digest_delivery_system.deliver_digest(digest)
     digest.mark_as_sent()
 
