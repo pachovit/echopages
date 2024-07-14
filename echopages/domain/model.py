@@ -19,7 +19,7 @@ class Digest:
         self.contents = contents
         self.sent = sent
 
-    def mark_as_sent(self):
+    def mark_as_sent(self) -> None:
         self.sent = True
 
 

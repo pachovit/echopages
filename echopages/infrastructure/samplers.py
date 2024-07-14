@@ -4,7 +4,7 @@ from echopages.domain import model
 
 
 class SimpleContentSampler(model.ContentSampler):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.count_index = 0
 

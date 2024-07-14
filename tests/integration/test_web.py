@@ -5,7 +5,7 @@ from echopages.infrastructure import web
 client = TestClient(web.app)
 
 
-def test_add_content():
+def test_add_content() -> None:
     content = "sample content unit 1"
     url = "http://127.0.0.1:8000"
 
@@ -19,7 +19,7 @@ def test_add_content():
     assert r.json()["text"] == content
 
 
-# def test_configure_schedule():
+# def test_configure_schedule() -> None:
 #     url = "http://127.0.0.1:8000"
 
 #     r = requests.post(f"{url}/configure_schedule", json={"time_of_day": "07:00"})
@@ -27,7 +27,7 @@ def test_add_content():
 #     assert r.ok
 
 
-# def test_generate_digest():
+# def test_generate_digest() -> None:
 #     url = "http://127.0.0.1:8000"
 #     number_of_units = 2
 #     content = "sample content unit 1"

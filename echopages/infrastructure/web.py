@@ -28,7 +28,7 @@ class GetContentResponse(BaseModel):
 async def add_content(
     content: Content,
     content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
-):
+) -> AddContentResponse:
     # Simulate adding content
     content_id = services.add_content(content_repo, content.text)
     return AddContentResponse(content_id=content_id)
@@ -38,14 +38,13 @@ async def add_content(
 async def get_content(
     content_id: int,
     content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
-):
+) -> GetContentResponse:
     content = content_repo.get_by_id(content_id)
-
-    return (
-        GetContentResponse(text=content.text)
-        if content
-        else {"error": f"Content unit with id {content_id} not found"}
-    )
+    if content is None:
+        text = "Content Not Found"
+    else:
+        text = content.text
+    return GetContentResponse(text=text)
 
 
 # class Schedule(BaseModel):

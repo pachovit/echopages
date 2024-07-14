@@ -14,11 +14,11 @@ from echopages.infrastructure.fakes import (
 )
 
 
-def test_user_can_add_contents():
+def test_user_can_add_contents() -> None:
     # Given: Some content units
     contents = [
-        model.Content(id="1", text="content unit 1"),
-        model.Content(id="2", text="content unit 2"),
+        model.Content(id=1, text="content unit 1"),
+        model.Content(id=2, text="content unit 2"),
     ]
     contents_repo = FakeContentRepository(contents)
 
@@ -33,7 +33,7 @@ def test_user_can_add_contents():
     )
 
 
-def test_configure_schedule():
+def test_configure_schedule() -> None:
     # Given: Some schedule
     scheduler = schedulers.SimpleScheduler(lambda: None)
     assert scheduler.time_of_day == "00:00"
@@ -45,13 +45,13 @@ def test_configure_schedule():
     assert scheduler.time_of_day == "07:00"
 
 
-def test_generate_digest():
+def test_generate_digest() -> None:
     digest_repo = FakeDigestRepository([])
     content_sampler = samplers.SimpleContentSampler()
     contents = [
-        model.Content(id="1", text="content unit 1"),
-        model.Content(id="2", text="content unit 2"),
-        model.Content(id="3", text="content unit 3"),
+        model.Content(id=1, text="content unit 1"),
+        model.Content(id=2, text="content unit 2"),
+        model.Content(id=3, text="content unit 3"),
     ]
     content_repo = FakeContentRepository(contents)
     number_of_units = 2
@@ -68,17 +68,17 @@ def test_generate_digest():
     assert digests[0].sent is False
 
 
-def test_send_digest():
+def test_send_digest() -> None:
     contents = [
-        model.Content(id="1", text="content unit 1"),
-        model.Content(id="2", text="content unit 2"),
-        model.Content(id="3", text="content unit 3"),
+        model.Content(id=1, text="content unit 1"),
+        model.Content(id=2, text="content unit 2"),
+        model.Content(id=3, text="content unit 3"),
     ]
     delivery_system = FakeDigestDeliverySystem()
-    digest = model.Digest(id="d1", contents=contents)
+    digest = model.Digest(id=1, contents=contents)
     digest_repo = FakeDigestRepository([digest])
 
-    services.send_digest(delivery_system, digest_repo, "d1")
+    services.send_digest(delivery_system, digest_repo, 1)
 
     digests = digest_repo.get_all()
     assert delivery_system.sent_contents == [
@@ -87,7 +87,7 @@ def test_send_digest():
     assert digests[0].sent is True
 
 
-def test_all_flow():
+def test_all_flow() -> None:
     content_repo = FakeContentRepository([])
     digest_repo = FakeDigestRepository([])
     delivery_system = FakeDigestDeliverySystem()

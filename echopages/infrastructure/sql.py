@@ -10,7 +10,7 @@ from echopages.infrastructure.orm import metadata, start_mappers
 engine = None
 
 
-def get_session_maker(db_uri):
+def get_session_maker(db_uri: str) -> sessionmaker[Session]:
     global engine
     if engine is None:
         engine = create_engine(db_uri)
@@ -20,7 +20,7 @@ def get_session_maker(db_uri):
 
 
 class SQLContentRepository(ContentRepository):
-    def __init__(self, db_session: Session):
+    def __init__(self, db_session: Session) -> None:
         self.db_session = db_session
 
     def get_by_id(self, content_id: int) -> Optional[model.Content]:

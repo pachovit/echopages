@@ -34,7 +34,7 @@ digest_content_association = Table(
 )
 
 
-def start_mappers():
+def start_mappers() -> None:
     mapper_registry = registry()
     mapper_registry.map_imperatively(model.Content, contents)
     mapper_registry.map_imperatively(
