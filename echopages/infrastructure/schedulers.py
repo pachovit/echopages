@@ -1,6 +1,6 @@
 from threading import Thread
 from time import sleep
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 import schedule
 
@@ -10,7 +10,7 @@ from echopages.domain import model
 class SimpleScheduler(model.Scheduler):
     def __init__(
         self,
-        function: Callable[[], None],
+        function: Callable[[], Any],
         time_of_day: Optional[str] = None,
         time_zone: str = "Europe/Berlin",
         sleep_interval: float = 1.0,

@@ -43,6 +43,19 @@ class FakeDigestRepository(repositories.DigestRepository):
         return digest.id
 
 
+class FakeUnitOfWork(repositories.UnitOfWork):
+    def __init__(self):
+        self.content_repo = FakeContentRepository([])
+        self.digest_repo = FakeDigestRepository([])
+        self.committed = False
+
+    def _commit(self):
+        self.committed = True
+
+    def rollback(self):
+        pass
+
+
 class FakeDigestDeliverySystem(model.DigestDeliverySystem):
     def __init__(self) -> None:
         super().__init__()

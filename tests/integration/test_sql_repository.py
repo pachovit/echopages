@@ -9,5 +9,6 @@ def test_add_content_returns_id(db_session: Session) -> None:
     content = model.Content(text="sample content unit 1")
 
     content_id = content_repo.add(content)
+    content_repo.db_session.commit()
 
     assert content_id == content.id

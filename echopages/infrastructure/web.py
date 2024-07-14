@@ -1,9 +1,14 @@
-from fastapi import Depends, FastAPI, status
-from pydantic import BaseModel
+from datetime import datetime
+from typing import List
 
+from fastapi import Depends, FastAPI, status
+from pydantic import BaseModel, field_validator
+
+import echopages.config
 from echopages.application import services
-from echopages.bootstrap import get_managed_content_repo
 from echopages.domain import repositories
+from echopages.infrastructure import samplers, schedulers, sql
+from echopages.infrastructure.fakes import FakeDigestDeliverySystem
 
 app = FastAPI()
 
@@ -27,19 +32,20 @@ class GetContentResponse(BaseModel):
 )
 async def add_content(
     content: Content,
-    content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
 ) -> AddContentResponse:
     # Simulate adding content
-    content_id = services.add_content(content_repo, content.text)
+    content_id = services.add_content(uow, content.text)
     return AddContentResponse(content_id=content_id)
 
 
 @app.get("/contents/{content_id}", response_model=GetContentResponse)
 async def get_content(
     content_id: int,
-    content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
 ) -> GetContentResponse:
-    content = content_repo.get_by_id(content_id)
+    content = services.get_content_by_id(unit_of_work=uow, content_id=content_id)
+
     if content is None:
         text = "Content Not Found"
     else:
@@ -47,24 +53,61 @@ async def get_content(
     return GetContentResponse(text=text)
 
 
-# class Schedule(BaseModel):
-#     time_of_day: str = Field(
-#         ...,
-#         regex=r"^([01]\d|2[0-3]):([0-5]\d)$",  # regex for HH:MM format
-#         example="12:30",
-#     )
+class TriggerDigest(BaseModel):
+    n_units: int = 1
 
-# @app.post("/configure_schedule")
-# async def configure_schedule(schedule: Schedule):
-#     digest_repo = repositories.DigestRepository([])
-#     content_repo = repositories.ContentRepository([])
-#     content_sampler = samplers.SimpleContentSampler()
-#     number_of_units = config.NUMBER_OF_UNITS_PER_DIGEST
-#     scheduler = schedulers.SimpleScheduler(
-#         services.generate_digest(
-#             digest_repo, content_repo, content_sampler, number_of_units
-#         )
-#     )
-#     services.configure_schedule(scheduler, schedule.time_of_day)
-#     scheduler.update_schedule(schedule.time_of_day)
-#     return {"message": "Schedule updated"}
+
+class TriggerDigestResponse(BaseModel):
+    digest: List[str]
+
+
+@app.post("/trigger_digest")
+async def trigger_digest(
+    trigger_digest_request: TriggerDigest,
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+) -> TriggerDigestResponse:
+    content_sampler = samplers.SimpleContentSampler()
+    digest_delivery_system = FakeDigestDeliverySystem()
+
+    digest = services.delivery_service(
+        uow, content_sampler, trigger_digest_request.n_units, digest_delivery_system
+    )
+
+    return TriggerDigestResponse(digest=[content.text for content in digest.contents])
+
+
+class Schedule(BaseModel):
+    time_of_day: str
+
+    @field_validator("time_of_day")
+    def check_time_format(cls, v: str) -> str:
+        datetime.strptime(v, "%H:%M")
+        return v
+
+
+class ConfigureScheduleResponse(BaseModel):
+    message: str = "Schedule updated"
+
+
+@app.post("/configure_schedule")
+async def configure_schedule(
+    schedule: Schedule,
+    content_repo: repositories.ContentRepository = Depends(
+        sql.get_managed_content_repo
+    ),
+    digest_repo: repositories.DigestRepository = Depends(sql.get_managed_digest_repo),
+) -> ConfigureScheduleResponse:
+    content_sampler = samplers.SimpleContentSampler()
+
+    scheduler = schedulers.SimpleScheduler(
+        lambda: services.generate_digest(
+            digest_repo,
+            content_repo,
+            content_sampler,
+            echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
+        )
+    )
+
+    services.configure_schedule(scheduler, schedule.time_of_day)
+
+    return ConfigureScheduleResponse()

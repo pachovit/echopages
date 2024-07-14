@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import abc
 from typing import List, Optional
 
@@ -29,4 +31,26 @@ class DigestRepository(abc.ABC):
 
     @abc.abstractmethod
     def add(self, digest: model.Digest) -> int:
+        raise NotImplementedError
+
+
+class UnitOfWork(abc.ABC):
+    content_repo: ContentRepository
+    digest_repo: DigestRepository
+
+    def __enter__(self) -> UnitOfWork:
+        return self
+
+    def __exit__(self, *args):
+        self.rollback()
+
+    def commit(self):
+        self._commit()
+
+    @abc.abstractmethod
+    def _commit(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def rollback(self):
         raise NotImplementedError
