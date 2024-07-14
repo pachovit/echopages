@@ -4,9 +4,9 @@ from echopages.infrastructure import samplers
 
 def test_simple_content_sampler():
     content_units = [
-        model.ContentUnit(id="0", data="content unit 1"),
-        model.ContentUnit(id="1", data="content unit 2"),
-        model.ContentUnit(id="2", data="content unit 3"),
+        model.ContentUnit(id="0", text="content unit 1"),
+        model.ContentUnit(id="1", text="content unit 2"),
+        model.ContentUnit(id="2", text="content unit 3"),
     ]
 
     content_sampler = samplers.SimpleContentSampler()

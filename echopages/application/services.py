@@ -5,7 +5,7 @@ from echopages.domain import model, repositories
 
 
 def add_content(content_repo: repositories.ContentRepository, content: str) -> None:
-    content_repo.add(model.ContentUnit(id=str(uuid.uuid4()), data=content))
+    content_repo.add(model.ContentUnit(id=str(uuid.uuid4()), text=content))
 
 
 def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
