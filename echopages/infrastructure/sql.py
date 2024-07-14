@@ -10,10 +10,10 @@ from echopages.infrastructure.orm import metadata, start_mappers
 engine = None
 
 
-def get_session_maker():
+def get_session_maker(db_uri):
     global engine
     if engine is None:
-        engine = create_engine("sqlite:///test.db")
+        engine = create_engine(db_uri)
         metadata.create_all(engine)
         start_mappers()
     return sessionmaker(bind=engine)
