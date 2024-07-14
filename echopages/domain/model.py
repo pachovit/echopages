@@ -3,16 +3,21 @@ from typing import Callable, List, Optional
 
 
 class ContentUnit:
-    def __init__(self, id: str, text: str) -> None:
+    def __init__(self, id: Optional[int] = None, text: str = "") -> None:
         self.id = id
         self.text = text
 
 
 class Digest:
-    def __init__(self, id, contents: List[ContentUnit]):
+    def __init__(
+        self,
+        id: Optional[int] = None,
+        content_units: Optional[List[ContentUnit]] = [],
+        sent: Optional[bool] = False,
+    ) -> None:
         self.id = id
-        self.contents = contents
-        self.sent = False
+        self.content_units = content_units
+        self.sent = sent
 
     def mark_as_sent(self):
         self.sent = True

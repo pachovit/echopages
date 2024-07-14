@@ -64,7 +64,7 @@ def test_generate_digest():
     digests = digest_repo.get_all()
     assert len(digests) == 1
     assert digest_id == digests[0].id
-    assert digests[0].contents == content_units[:2]
+    assert digests[0].content_units == content_units[:2]
     assert digests[0].sent is False
 
 
@@ -75,7 +75,7 @@ def test_send_digest():
         model.ContentUnit(id="3", text="content unit 3"),
     ]
     delivery_system = FakeDigestDeliverySystem()
-    digest = model.Digest(id="d1", contents=content_units)
+    digest = model.Digest(id="d1", content_units=content_units)
     digest_repo = FakeDigestRepository([digest])
 
     services.send_digest(delivery_system, digest_repo, "d1")

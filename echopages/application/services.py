@@ -5,8 +5,7 @@ from echopages.domain import model, repositories
 
 
 def add_content(content_repo: repositories.ContentRepository, content: str) -> str:
-    content_unit_id = str(uuid.uuid4())
-    content_repo.add(model.ContentUnit(id=content_unit_id, text=content))
+    content_unit_id = content_repo.add(model.ContentUnit(text=content))
     return content_unit_id
 
 
@@ -31,7 +30,7 @@ def generate_digest(
 ) -> str:
     contents = sample_contents(content_repo, content_sampler, number_of_units)
 
-    digest = model.Digest(id=str(uuid.uuid4()), contents=contents)
+    digest = model.Digest(id=str(uuid.uuid4()), content_units=contents)
     digest_repo.add(digest)
 
     return digest.id

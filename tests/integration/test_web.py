@@ -1,20 +1,8 @@
 from fastapi.testclient import TestClient
 
 from echopages.infrastructure import web
-from echopages.infrastructure.fakes import FakeContentRepository
-
-content_repo = None
-
-
-def get_content_repo():
-    global content_repo
-    if content_repo is None:
-        content_repo = FakeContentRepository([])
-    return content_repo
-
 
 client = TestClient(web.app)
-web.app.dependency_overrides[web.get_content_repo] = lambda: get_content_repo()
 
 
 def test_add_content_unit():
