@@ -1,8 +1,9 @@
-from fastapi import FastAPI, status
+from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel
 
 from echopages.application import services
 from echopages.bootstrap import get_content_repo
+from echopages.domain import repositories
 
 app = FastAPI()
 
@@ -26,9 +27,9 @@ class GetContentUnitResponse(BaseModel):
 )
 async def add_content(
     content: Content,
+    content_repo: repositories.ContentRepository = Depends(get_content_repo),
 ):
     # Simulate adding content
-    content_repo = get_content_repo()
     content_unit_id = services.add_content(content_repo, content.text)
     return AddContentResponse(content_unit_id=content_unit_id)
 
@@ -36,8 +37,8 @@ async def add_content(
 @app.get("/content_units/{content_unit_id}", response_model=GetContentUnitResponse)
 async def get_content_unit(
     content_unit_id: str,
+    content_repo: repositories.ContentRepository = Depends(get_content_repo),
 ):
-    content_repo = get_content_repo()
     content_unit = content_repo.get_by_id(content_unit_id)
 
     return (

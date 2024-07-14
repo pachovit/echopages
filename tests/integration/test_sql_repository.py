@@ -1,11 +1,9 @@
 from echopages.domain import model
-from echopages.infrastructure.sql import SessionLocal, SQLContentRepository
+from echopages.infrastructure.sql import SQLContentRepository
 
 
-def test_add_content_returns_id():
-    session = SessionLocal()
-
-    content_repo = SQLContentRepository(session)
+def test_add_content_returns_id(db_session):
+    content_repo = SQLContentRepository(db_session)
     content_unit = model.ContentUnit(text="sample content unit 1")
 
     content_unit_id = content_repo.add(content_unit)
