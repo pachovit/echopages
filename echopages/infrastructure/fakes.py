@@ -46,4 +46,3 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
         content_to_send = ",".join([content.text for content in digest.content_units])
         self.sent_contents.append(content_to_send)
         logger.info(f"Sent contents {content_to_send}")
-        print(f"Sent contents {content_to_send}")
