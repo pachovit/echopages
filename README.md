@@ -1,17 +1,22 @@
 # Echo Pages
 
+EchoPages is a digest delivery system designed to provide users with scheduled summaries of their chosen content, such as book chapters or articles. Inspired by services like Readwise, EchoPages enhances the reading and learning experience by sending personalized content snippets on a predefined schedule, ensuring continuous engagement and retention.
+
 ## Features:
-* Configure daily schedule
+* **Content Scheduling**: Users can configure a specific time of the day to receive content digests, tailoring the delivery to their daily routine.
+* **Flexible Content Units**: Supports various types of content, including book chapters and articles, allowing users to add content manually or via integration with external sources.
+* **Repetitive Learning**: Implements spaced repetition in content delivery to enhance memory retention and learning efficacy.
+
+# Next features
+* Improved spaced repetition algorithm
+* **User Customization**: Offers settings to configure the number of content units per digest, catering to different reading speeds and preferences.
+
+
+# User stories
 * Add content
-* Digest is delivered
+* Configure schedule
+* Receive digest on time
 
-## Next:
-* First integration tests:
-  * 2 contents units are added
-  * Schedule is configured to every second
-  * Do 4 deliveries of 1 content unit each
-  * Assert 4 deliveries make sense
-
-
-## TODO:
-* Configure the number of content units in the digest
+To run:
+* Some way of adding content from outside
+* Some way of configuring a schedule from outside
