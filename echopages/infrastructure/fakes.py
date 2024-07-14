@@ -1,6 +1,9 @@
+import logging
 from typing import List
 
 from echopages.domain import model, repositories
+
+logger = logging.getLogger(__name__)
 
 
 class FakeContentRepository(repositories.ContentRepository):
@@ -42,3 +45,5 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
     def deliver_digest(self, digest: model.Digest) -> None:
         content_to_send = ",".join([content.text for content in digest.content_units])
         self.sent_contents.append(content_to_send)
+        logger.info(f"Sent contents {content_to_send}")
+        print(f"Sent contents {content_to_send}")
