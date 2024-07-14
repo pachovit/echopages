@@ -1,24 +1,11 @@
 from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
 
 from echopages.application import services
+from echopages.bootstrap import get_content_repo
 from echopages.domain.repositories import ContentRepository
-from echopages.infrastructure.sql import SessionLocal, SQLContentRepository
 
 app = FastAPI()
-
-
-def get_db():
-    db_session = SessionLocal()
-    try:
-        yield db_session
-    finally:
-        db_session.close()
-
-
-def get_content_repo(db_session: Session = Depends(get_db)):
-    return SQLContentRepository(db_session)
 
 
 class Content(BaseModel):
