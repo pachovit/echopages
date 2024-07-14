@@ -7,10 +7,16 @@ from echopages.domain import model
 from echopages.domain.repositories import ContentRepository
 from echopages.infrastructure.orm import metadata, start_mappers
 
-engine = create_engine("sqlite:///test.db")
-metadata.create_all(engine)
-SessionLocal = sessionmaker(bind=engine)
-start_mappers()
+engine = None
+
+
+def get_session_maker():
+    global engine
+    if engine is None:
+        engine = create_engine("sqlite:///test.db")
+        metadata.create_all(engine)
+        start_mappers()
+    return sessionmaker(bind=engine)
 
 
 class SQLContentRepository(ContentRepository):
