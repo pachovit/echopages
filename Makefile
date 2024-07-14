@@ -3,3 +3,6 @@ test:
 
 coverage:
 	PYTHONPATH=. pytest --cov=echopages -s tests 
+
+run:
+	PYTHONPATH=. python3 echopages/main.py
