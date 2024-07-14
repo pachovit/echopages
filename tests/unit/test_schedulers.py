@@ -7,11 +7,11 @@ from zoneinfo import ZoneInfo
 from echopages.infrastructure import schedulers
 
 
-def test_scheduler_works_on_time():
+def test_scheduler_works_on_time() -> None:
     class DummyClass:
         value = 0
 
-    def dummy_function():
+    def dummy_function() -> None:
         DummyClass.value = 1
 
     zone = ZoneInfo("Europe/Berlin")

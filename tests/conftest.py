@@ -1,6 +1,8 @@
 import os
+from typing import Generator
 
 import pytest
+from sqlalchemy.orm import Session
 
 from echopages.infrastructure.sql import get_session_maker
 
@@ -8,7 +10,7 @@ TEST_DB_URI = "sqlite:///test.db"
 
 
 @pytest.fixture(scope="session")
-def db_session():
+def db_session() -> Generator[Session, None, None]:
     session_maker = get_session_maker(TEST_DB_URI)
     session = session_maker()
     yield session

@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class FakeContentRepository(repositories.ContentRepository):
-    def __init__(self, contents: List[model.Content]):
+    def __init__(self, contents: List[model.Content]) -> None:
         self.contents = contents
 
     def get_by_id(self, content_id: int) -> model.Content:
@@ -16,14 +16,15 @@ class FakeContentRepository(repositories.ContentRepository):
     def get_all(self) -> List[model.Content]:
         return self.contents
 
-    def add(self, content: model.Content):
+    def add(self, content: model.Content) -> int:
         if content.id is None:
             content.id = len(self.contents) + 1
         self.contents.append(content)
+        return content.id
 
 
 class FakeDigestRepository(repositories.DigestRepository):
-    def __init__(self, digests: List[model.Digest]):
+    def __init__(self, digests: List[model.Digest]) -> None:
         self.digests = digests
 
     def get_by_id(self, digest_id: int) -> Optional[model.Digest]:

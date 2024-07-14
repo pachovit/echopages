@@ -1,10 +1,10 @@
 test:
 	PYTHONPATH=. pytest -s tests
-	mypy .
+	mypy . --strict
 
 coverage:
 	PYTHONPATH=. pytest --cov=echopages -s tests
-	mypy .
+	mypy . --strict
 
 run:
 	PYTHONPATH=. python3 echopages/main.py
