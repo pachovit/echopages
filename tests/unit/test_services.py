@@ -1,50 +1,17 @@
 from datetime import datetime, timedelta
 from time import sleep
-from typing import List
 
 from time_machine import travel
 from zoneinfo import ZoneInfo
 
 from echopages.application import services
-from echopages.domain import model, repositories
+from echopages.domain import model
 from echopages.infrastructure import samplers, schedulers
-
-
-class FakeContentRepository(repositories.ContentRepository):
-    def __init__(self, content_units: List[model.ContentUnit]):
-        self.content_units = content_units
-
-    def get_all(self) -> List[model.ContentUnit]:
-        return self.content_units
-
-    def add(self, content_unit: model.ContentUnit):
-        self.content_units.append(content_unit)
-
-
-class FakeDigestRepository(repositories.DigestRepository):
-    def __init__(self, digests: List[model.Digest]):
-        self.digests = digests
-
-    def get(self, digest_id: str) -> model.Digest:
-        return next(d for d in self.digests if d.id == digest_id)
-
-    def get_all(self) -> List[model.Digest]:
-        return self.digests
-
-    def add(self, digest: model.ContentUnit):
-        self.digests.append(digest)
-
-
-class FakeDigestDeliverySystem(model.DigestDeliverySystem):
-    def __init__(self) -> None:
-        super().__init__()
-
-        self.sent_contents = []
-
-    def deliver_digest(self, digest: model.Digest) -> None:
-        self.sent_contents.append(
-            ",".join([content.text for content in digest.contents])
-        )
+from echopages.infrastructure.fakes import (
+    FakeContentRepository,
+    FakeDigestDeliverySystem,
+    FakeDigestRepository,
+)
 
 
 def test_user_can_add_content_units():
