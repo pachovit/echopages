@@ -44,7 +44,7 @@ class Scheduler(abc.ABC):
         time_zone: str = "Europe/Berlin",
         sleep_interval: float = 1.0,
     ) -> None:
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def configure_schedule(self, time_of_day: str) -> None:

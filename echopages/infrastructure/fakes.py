@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 from echopages.domain import model, repositories
 
@@ -10,7 +10,7 @@ class FakeContentRepository(repositories.ContentRepository):
     def __init__(self, contents: List[model.Content]):
         self.contents = contents
 
-    def get_by_id(self, content_id: str) -> model.Content:
+    def get_by_id(self, content_id: int) -> model.Content:
         return next(c for c in self.contents if c.id == content_id)
 
     def get_all(self) -> List[model.Content]:
@@ -26,23 +26,32 @@ class FakeDigestRepository(repositories.DigestRepository):
     def __init__(self, digests: List[model.Digest]):
         self.digests = digests
 
-    def get_by_id(self, digest_id: str) -> model.Digest:
-        return next(d for d in self.digests if d.id == digest_id)
+    def get_by_id(self, digest_id: int) -> Optional[model.Digest]:
+        try:
+            return next(d for d in self.digests if d.id == digest_id)
+        except StopIteration:
+            return None
 
     def get_all(self) -> List[model.Digest]:
         return self.digests
 
-    def add(self, digest: model.Content):
+    def add(self, digest: model.Digest) -> int:
+        if digest.id is None:
+            digest.id = len(self.digests) + 1
         self.digests.append(digest)
+        return digest.id
 
 
 class FakeDigestDeliverySystem(model.DigestDeliverySystem):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sent_contents = []
+        self.sent_contents: List[str] = []
 
     def deliver_digest(self, digest: model.Digest) -> None:
-        content_to_send = ",".join([content.text for content in digest.contents])
+        if digest.contents:
+            content_to_send = ",".join([content.text for content in digest.contents])
+        else:
+            raise ValueError("Digest Is Empty")
         self.sent_contents.append(content_to_send)
         logger.info(f"Sent contents {content_to_send}")

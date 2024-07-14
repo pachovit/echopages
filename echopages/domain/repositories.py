@@ -1,12 +1,12 @@
 import abc
-from typing import List
+from typing import List, Optional
 
 from echopages.domain import model
 
 
 class ContentRepository(abc.ABC):
     @abc.abstractmethod
-    def get_by_id(self, content_id: str) -> model.Content:
+    def get_by_id(self, content_id: int) -> Optional[model.Content]:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -20,7 +20,7 @@ class ContentRepository(abc.ABC):
 
 class DigestRepository(abc.ABC):
     @abc.abstractmethod
-    def get_by_id(self) -> model.Digest:
+    def get_by_id(self, digest_id: int) -> Optional[model.Digest]:
         raise NotImplementedError
 
     @abc.abstractmethod
