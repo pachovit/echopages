@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from echopages.domain import model
-from echopages.infrastructure.sql import SQLContentRepository
+from echopages.infrastructure.sql_repositories import SQLContentRepository
 
 
 def test_add_content_returns_id(db_session: Session) -> None:

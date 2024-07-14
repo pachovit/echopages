@@ -73,6 +73,8 @@ async def trigger_digest(
         uow, content_sampler, trigger_digest_request.n_units, digest_delivery_system
     )
 
+    assert digest is not None
+    assert digest.contents is not None
     return TriggerDigestResponse(digest=[content.text for content in digest.contents])
 
 
@@ -92,17 +94,13 @@ class ConfigureScheduleResponse(BaseModel):
 @app.post("/configure_schedule")
 async def configure_schedule(
     schedule: Schedule,
-    content_repo: repositories.ContentRepository = Depends(
-        sql.get_managed_content_repo
-    ),
-    digest_repo: repositories.DigestRepository = Depends(sql.get_managed_digest_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
 ) -> ConfigureScheduleResponse:
     content_sampler = samplers.SimpleContentSampler()
 
     scheduler = schedulers.SimpleScheduler(
         lambda: services.generate_digest(
-            digest_repo,
-            content_repo,
+            uow,
             content_sampler,
             echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
         )

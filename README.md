@@ -19,4 +19,3 @@ EchoPages is a digest delivery system designed to provide users with scheduled s
 
 # Backlog
 * Endpoints for configuration
-* Mypy

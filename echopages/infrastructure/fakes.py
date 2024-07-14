@@ -44,15 +44,15 @@ class FakeDigestRepository(repositories.DigestRepository):
 
 
 class FakeUnitOfWork(repositories.UnitOfWork):
-    def __init__(self):
+    def __init__(self) -> None:
         self.content_repo = FakeContentRepository([])
         self.digest_repo = FakeDigestRepository([])
         self.committed = False
 
-    def _commit(self):
+    def _commit(self) -> None:
         self.committed = True
 
-    def rollback(self):
+    def rollback(self) -> None:
         pass
 
 

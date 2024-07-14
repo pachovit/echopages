@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from time import sleep
-from typing import List
+from typing import List, Tuple
 
 from time_machine import travel
 from zoneinfo import ZoneInfo
@@ -14,7 +14,7 @@ from echopages.infrastructure.fakes import (
 )
 
 
-def setup_contents(contents: List[str]) -> FakeUnitOfWork:
+def setup_contents(contents: List[str]) -> Tuple[FakeUnitOfWork, List[model.Content]]:
     unit_of_work = FakeUnitOfWork()
     content_objects = []
     with unit_of_work:
@@ -66,6 +66,7 @@ def test_user_can_get_digests() -> None:
     digest = services.get_digest_by_id(unit_of_work, 123)
 
     assert digest is not None
+    assert digest.contents is not None
     assert digest.contents[0].text == "content unit 3"
 
 
@@ -85,6 +86,7 @@ def test_generate_digest() -> None:
     contents = ["content unit 1", "content unit 2", "content unit 3"]
     unit_of_work, content_objects = setup_contents(contents)
     content_sampler = samplers.SimpleContentSampler()
+    samplers.CountIndex.value = 0
 
     number_of_units = 2
     with unit_of_work:
@@ -124,6 +126,7 @@ def test_all_flow() -> None:
     unit_of_work, content_objects = setup_contents([])
     delivery_system = FakeDigestDeliverySystem()
     content_sampler = samplers.SimpleContentSampler()
+    samplers.CountIndex.value = 0
 
     # Populate contents
     services.add_content(unit_of_work, "content unit 1")

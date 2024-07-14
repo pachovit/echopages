@@ -41,16 +41,16 @@ class UnitOfWork(abc.ABC):
     def __enter__(self) -> UnitOfWork:
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:  # type: ignore
         self.rollback()
 
-    def commit(self):
+    def commit(self) -> None:
         self._commit()
 
     @abc.abstractmethod
-    def _commit(self):
+    def _commit(self) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rollback(self):
+    def rollback(self) -> None:
         raise NotImplementedError

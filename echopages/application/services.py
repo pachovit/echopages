@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from echopages.domain import model, repositories
 
@@ -12,23 +12,29 @@ def add_content(unit_of_work: repositories.UnitOfWork, content: str) -> int:
 
 def get_content_by_id(
     unit_of_work: repositories.UnitOfWork, content_id: int
-) -> model.Content:
+) -> Optional[model.Content]:
     with unit_of_work:
         content = unit_of_work.content_repo.get_by_id(content_id)
+        if content is None:
+            return None
         new_content = model.Content(id=content.id, text=content.text)
     return new_content
 
 
 def get_digest_by_id(
     unit_of_work: repositories.UnitOfWork, digest_id: int
-) -> model.Digest:
+) -> Optional[model.Digest]:
     with unit_of_work:
         digest = unit_of_work.digest_repo.get_by_id(digest_id)
+        if digest is None:
+            return None
+        contents = digest.contents
+        if contents is None:
+            contents = []
         new_content = model.Digest(
             id=digest.id,
             contents=[
-                model.Content(id=content.id, text=content.text)
-                for content in digest.contents
+                model.Content(id=content.id, text=content.text) for content in contents
             ],
         )
     return new_content
@@ -86,4 +92,7 @@ def delivery_service(
     digest_id = generate_digest(unit_of_work, content_sampler, number_of_units)
     send_digest(digest_delivery_system, unit_of_work, digest_id)
 
-    return get_digest_by_id(unit_of_work, digest_id)
+    digest = get_digest_by_id(unit_of_work, digest_id)
+
+    assert digest is not None
+    return digest
