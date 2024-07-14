@@ -40,6 +40,5 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
         self.sent_contents = []
 
     def deliver_digest(self, digest: model.Digest) -> None:
-        self.sent_contents.append(
-            ",".join([content.text for content in digest.content_units])
-        )
+        content_to_send = ",".join([content.text for content in digest.content_units])
+        self.sent_contents.append(content_to_send)

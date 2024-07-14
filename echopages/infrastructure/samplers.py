@@ -15,6 +15,8 @@ class SimpleContentSampler(model.ContentSampler):
         Returns `number_of_units` content units starting from the current count index.
         If there are not enough content units available, it loops back to the beginning of the list.
         """
+        if len(content_units) == 0:
+            raise ValueError("No content units available")
 
         content_units_length = len(content_units)
         sampled_content_units = []
