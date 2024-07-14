@@ -1,20 +1,24 @@
 from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from echopages.application import services
 from echopages.domain.repositories import ContentRepository
-from echopages.infrastructure.fakes import FakeContentRepository
+from echopages.infrastructure.sql import SessionLocal, SQLContentRepository
 
 app = FastAPI()
 
-content_repo = None
+
+def get_db():
+    db_session = SessionLocal()
+    try:
+        yield db_session
+    finally:
+        db_session.close()
 
 
-def get_content_repo():
-    global content_repo
-    if content_repo is None:
-        content_repo = FakeContentRepository([])
-    return content_repo
+def get_content_repo(db_session: Session = Depends(get_db)):
+    return SQLContentRepository(db_session)
 
 
 class Content(BaseModel):
@@ -22,14 +26,18 @@ class Content(BaseModel):
 
 
 class AddContentResponse(BaseModel):
-    content_unit_id: str
+    content_unit_id: int
 
 
 class GetContentUnitResponse(BaseModel):
     text: str
 
 
-@app.post("/add_content", status_code=status.HTTP_201_CREATED)
+@app.post(
+    "/add_content",
+    status_code=status.HTTP_201_CREATED,
+    response_model=AddContentResponse,
+)
 async def add_content(
     content: Content,
     content_repo: ContentRepository = Depends(get_content_repo),
@@ -40,7 +48,7 @@ async def add_content(
     return AddContentResponse(content_unit_id=content_unit_id)
 
 
-@app.get("/content_units/{content_unit_id}")
+@app.get("/content_units/{content_unit_id}", response_model=GetContentUnitResponse)
 async def get_content_unit(
     content_unit_id: str,
     content_repo: ContentRepository = Depends(get_content_repo),

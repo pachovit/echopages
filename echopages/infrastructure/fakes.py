@@ -14,6 +14,8 @@ class FakeContentRepository(repositories.ContentRepository):
         return self.content_units
 
     def add(self, content_unit: model.ContentUnit):
+        if content_unit.id is None:
+            content_unit.id = len(self.content_units) + 1
         self.content_units.append(content_unit)
 
 
@@ -39,5 +41,5 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
 
     def deliver_digest(self, digest: model.Digest) -> None:
         self.sent_contents.append(
-            ",".join([content.text for content in digest.contents])
+            ",".join([content.text for content in digest.content_units])
         )

@@ -17,6 +17,9 @@ EchoPages is a digest delivery system designed to provide users with scheduled s
 * Configure schedule
 * Receive digest on time
 
-To run:
-* Some way of adding content from outside
-* Some way of configuring a schedule from outside
+# Backlog
+* TestDB should be deleted after tests
+* We should be able to customize the testdb for prod and testing
+* Rename ContentUnit to Content
+* Endpoints for configuration
+* Mypy

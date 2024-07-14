@@ -6,10 +6,6 @@ from echopages.domain import model
 
 class ContentRepository(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, content_units: List[model.ContentUnit]):
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def get_by_id(self, content_unit_id: str) -> model.ContentUnit:
         raise NotImplementedError
 
@@ -18,15 +14,11 @@ class ContentRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add(self, content_unit: model.ContentUnit):
+    def add(self, content_unit: model.ContentUnit) -> int:
         raise NotImplementedError
 
 
 class DigestRepository(abc.ABC):
-    @abc.abstractmethod
-    def __init__(self):
-        raise NotImplementedError
-
     @abc.abstractmethod
     def get_by_id(self) -> model.Digest:
         raise NotImplementedError
@@ -36,5 +28,5 @@ class DigestRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add(self, digest: model.Digest) -> None:
+    def add(self, digest: model.Digest) -> int:
         raise NotImplementedError
