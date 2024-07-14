@@ -10,6 +10,10 @@ class ContentRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_by_id(self, content_unit_id: str) -> model.ContentUnit:
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_all(self) -> List[model.ContentUnit]:
         raise NotImplementedError
 
@@ -24,7 +28,7 @@ class DigestRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self) -> model.Digest:
+    def get_by_id(self) -> model.Digest:
         raise NotImplementedError
 
     @abc.abstractmethod

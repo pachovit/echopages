@@ -4,8 +4,10 @@ from typing import List
 from echopages.domain import model, repositories
 
 
-def add_content(content_repo: repositories.ContentRepository, content: str) -> None:
-    content_repo.add(model.ContentUnit(id=str(uuid.uuid4()), text=content))
+def add_content(content_repo: repositories.ContentRepository, content: str) -> str:
+    content_unit_id = str(uuid.uuid4())
+    content_repo.add(model.ContentUnit(id=content_unit_id, text=content))
+    return content_unit_id
 
 
 def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
@@ -40,7 +42,7 @@ def send_digest(
     digest_repo: repositories.DigestRepository,
     digest_id: str,
 ) -> None:
-    digest = digest_repo.get(digest_id)
+    digest = digest_repo.get_by_id(digest_id)
     digest_delivery_system.deliver_digest(digest)
     digest.mark_as_sent()
 

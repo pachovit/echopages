@@ -7,6 +7,9 @@ class FakeContentRepository(repositories.ContentRepository):
     def __init__(self, content_units: List[model.ContentUnit]):
         self.content_units = content_units
 
+    def get_by_id(self, content_unit_id: str) -> model.ContentUnit:
+        return next(c for c in self.content_units if c.id == content_unit_id)
+
     def get_all(self) -> List[model.ContentUnit]:
         return self.content_units
 
@@ -18,7 +21,7 @@ class FakeDigestRepository(repositories.DigestRepository):
     def __init__(self, digests: List[model.Digest]):
         self.digests = digests
 
-    def get(self, digest_id: str) -> model.Digest:
+    def get_by_id(self, digest_id: str) -> model.Digest:
         return next(d for d in self.digests if d.id == digest_id)
 
     def get_all(self) -> List[model.Digest]:

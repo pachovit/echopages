@@ -1,5 +1,5 @@
 test:
-	pytest -s tests
+	PYTHONPATH=. pytest -s tests
 
 coverage:
-	pytest --cov=echopages -s tests 
+	PYTHONPATH=. pytest --cov=echopages -s tests 
