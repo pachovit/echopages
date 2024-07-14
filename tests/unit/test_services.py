@@ -43,15 +43,15 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
 
     def deliver_digest(self, digest: model.Digest) -> None:
         self.sent_contents.append(
-            ",".join([content.data for content in digest.contents])
+            ",".join([content.text for content in digest.contents])
         )
 
 
 def test_user_can_add_content_units():
     # Given: Some content units
     content_units = [
-        model.ContentUnit(id="1", data="content unit 1"),
-        model.ContentUnit(id="2", data="content unit 2"),
+        model.ContentUnit(id="1", text="content unit 1"),
+        model.ContentUnit(id="2", text="content unit 2"),
     ]
     contents_repo = FakeContentRepository(content_units)
 
@@ -62,7 +62,7 @@ def test_user_can_add_content_units():
     available_content = contents_repo.get_all()
     assert len(available_content) == 3
     assert {"content unit 1", "content unit 2", "content unit 3"} == set(
-        content.data for content in available_content
+        content.text for content in available_content
     )
 
 
@@ -82,9 +82,9 @@ def test_generate_digest():
     digest_repo = FakeDigestRepository([])
     content_sampler = samplers.SimpleContentSampler()
     content_units = [
-        model.ContentUnit(id="1", data="content unit 1"),
-        model.ContentUnit(id="2", data="content unit 2"),
-        model.ContentUnit(id="3", data="content unit 3"),
+        model.ContentUnit(id="1", text="content unit 1"),
+        model.ContentUnit(id="2", text="content unit 2"),
+        model.ContentUnit(id="3", text="content unit 3"),
     ]
     content_repo = FakeContentRepository(content_units)
     number_of_units = 2
@@ -103,9 +103,9 @@ def test_generate_digest():
 
 def test_send_digest():
     content_units = [
-        model.ContentUnit(id="1", data="content unit 1"),
-        model.ContentUnit(id="2", data="content unit 2"),
-        model.ContentUnit(id="3", data="content unit 3"),
+        model.ContentUnit(id="1", text="content unit 1"),
+        model.ContentUnit(id="2", text="content unit 2"),
+        model.ContentUnit(id="3", text="content unit 3"),
     ]
     delivery_system = FakeDigestDeliverySystem()
     digest = model.Digest(id="d1", contents=content_units)

@@ -3,9 +3,9 @@ from typing import Callable, List, Optional
 
 
 class ContentUnit:
-    def __init__(self, id: str, data: str) -> None:
+    def __init__(self, id: str, text: str) -> None:
         self.id = id
-        self.data = data
+        self.text = text
 
 
 class Digest:
