@@ -9,20 +9,20 @@ class SimpleContentSampler(model.ContentSampler):
         self.count_index = 0
 
     def sample(
-        self, content_units: List[model.ContentUnit], number_of_units: int
-    ) -> List[model.ContentUnit]:
+        self, contents: List[model.Content], number_of_units: int
+    ) -> List[model.Content]:
         """
         Returns `number_of_units` content units starting from the current count index.
         If there are not enough content units available, it loops back to the beginning of the list.
         """
-        if len(content_units) == 0:
+        if len(contents) == 0:
             raise ValueError("No content units available")
 
-        content_units_length = len(content_units)
-        sampled_content_units = []
+        contents_length = len(contents)
+        sampled_contents = []
 
         for _ in range(number_of_units):
-            sampled_content_units.append(content_units[self.count_index])
-            self.count_index = (self.count_index + 1) % content_units_length
+            sampled_contents.append(contents[self.count_index])
+            self.count_index = (self.count_index + 1) % contents_length
 
-        return sampled_content_units
+        return sampled_contents

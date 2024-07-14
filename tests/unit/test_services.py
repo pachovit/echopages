@@ -14,13 +14,13 @@ from echopages.infrastructure.fakes import (
 )
 
 
-def test_user_can_add_content_units():
+def test_user_can_add_contents():
     # Given: Some content units
-    content_units = [
-        model.ContentUnit(id="1", text="content unit 1"),
-        model.ContentUnit(id="2", text="content unit 2"),
+    contents = [
+        model.Content(id="1", text="content unit 1"),
+        model.Content(id="2", text="content unit 2"),
     ]
-    contents_repo = FakeContentRepository(content_units)
+    contents_repo = FakeContentRepository(contents)
 
     # When: User adds content units
     services.add_content(contents_repo, "content unit 3")
@@ -48,12 +48,12 @@ def test_configure_schedule():
 def test_generate_digest():
     digest_repo = FakeDigestRepository([])
     content_sampler = samplers.SimpleContentSampler()
-    content_units = [
-        model.ContentUnit(id="1", text="content unit 1"),
-        model.ContentUnit(id="2", text="content unit 2"),
-        model.ContentUnit(id="3", text="content unit 3"),
+    contents = [
+        model.Content(id="1", text="content unit 1"),
+        model.Content(id="2", text="content unit 2"),
+        model.Content(id="3", text="content unit 3"),
     ]
-    content_repo = FakeContentRepository(content_units)
+    content_repo = FakeContentRepository(contents)
     number_of_units = 2
     assert len(digest_repo.get_all()) == 0
 
@@ -64,18 +64,18 @@ def test_generate_digest():
     digests = digest_repo.get_all()
     assert len(digests) == 1
     assert digest_id == digests[0].id
-    assert digests[0].content_units == content_units[:2]
+    assert digests[0].contents == contents[:2]
     assert digests[0].sent is False
 
 
 def test_send_digest():
-    content_units = [
-        model.ContentUnit(id="1", text="content unit 1"),
-        model.ContentUnit(id="2", text="content unit 2"),
-        model.ContentUnit(id="3", text="content unit 3"),
+    contents = [
+        model.Content(id="1", text="content unit 1"),
+        model.Content(id="2", text="content unit 2"),
+        model.Content(id="3", text="content unit 3"),
     ]
     delivery_system = FakeDigestDeliverySystem()
-    digest = model.Digest(id="d1", content_units=content_units)
+    digest = model.Digest(id="d1", contents=contents)
     digest_repo = FakeDigestRepository([digest])
 
     services.send_digest(delivery_system, digest_repo, "d1")

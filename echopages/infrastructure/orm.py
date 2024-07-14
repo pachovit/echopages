@@ -13,8 +13,8 @@ from echopages.domain import model
 
 metadata = MetaData()
 
-content_units = Table(
-    "content_units",
+contents = Table(
+    "contents",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("text", String),
@@ -30,19 +30,19 @@ digest_content_association = Table(
     "digest_content_association",
     metadata,
     Column("digest_id", Integer, ForeignKey("digests.id")),
-    Column("content_unit_id", Integer, ForeignKey("content_units.id")),
+    Column("content_id", Integer, ForeignKey("contents.id")),
 )
 
 
 def start_mappers():
     mapper_registry = registry()
-    mapper_registry.map_imperatively(model.ContentUnit, content_units)
+    mapper_registry.map_imperatively(model.Content, contents)
     mapper_registry.map_imperatively(
         model.Digest,
         digests,
         properties={
-            "content_units": relationship(
-                model.ContentUnit, secondary=digest_content_association
+            "contents": relationship(
+                model.Content, secondary=digest_content_association
             )
         },
     )

@@ -23,17 +23,17 @@ class SQLContentRepository(ContentRepository):
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    def get_by_id(self, content_unit_id: str) -> model.ContentUnit:
+    def get_by_id(self, content_id: str) -> model.Content:
         return (
-            self.db_session.query(model.ContentUnit)
-            .filter(model.ContentUnit.id == content_unit_id)
+            self.db_session.query(model.Content)
+            .filter(model.Content.id == content_id)
             .first()
         )
 
-    def get_all(self) -> List[model.ContentUnit]:
-        return self.db_session.query(model.ContentUnit).all()
+    def get_all(self) -> List[model.Content]:
+        return self.db_session.query(model.Content).all()
 
-    def add(self, content_unit: model.ContentUnit) -> int:
-        self.db_session.add(content_unit)
+    def add(self, content: model.Content) -> int:
+        self.db_session.add(content)
         self.db_session.commit()
-        return content_unit.id
+        return content.id

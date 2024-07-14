@@ -4,8 +4,8 @@ from echopages.infrastructure.sql import SQLContentRepository
 
 def test_add_content_returns_id(db_session):
     content_repo = SQLContentRepository(db_session)
-    content_unit = model.ContentUnit(text="sample content unit 1")
+    content = model.Content(text="sample content unit 1")
 
-    content_unit_id = content_repo.add(content_unit)
+    content_id = content_repo.add(content)
 
-    assert content_unit_id == content_unit.id
+    assert content_id == content.id
