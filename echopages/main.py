@@ -3,12 +3,10 @@ import logging
 import uvicorn
 
 import echopages.config
-from echopages import bootstrap
 from echopages.application import services
-from echopages.infrastructure import samplers, schedulers, web
+from echopages.infrastructure import samplers, schedulers, sql, web
 from echopages.infrastructure.fakes import (
     FakeDigestDeliverySystem,
-    FakeDigestRepository,
 )
 
 logging.basicConfig(
@@ -16,15 +14,17 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    content_repo = bootstrap.get_content_repo(echopages.config.DB_URI)
-    digest_repo = FakeDigestRepository([])
+    unit_of_work = sql.get_unit_of_work(echopages.config.DB_URI)
     delivery_system = FakeDigestDeliverySystem()
     content_sampler = samplers.SimpleContentSampler()
 
     # Configure Scheduler
     scheduler = schedulers.SimpleScheduler(
         lambda: services.delivery_service(
-            digest_repo, content_repo, content_sampler, 1, delivery_system
+            unit_of_work,
+            content_sampler,
+            echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
+            delivery_system,
         ),
         time_of_day="07:00",
     )
