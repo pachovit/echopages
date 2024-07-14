@@ -6,15 +6,15 @@ from echopages.domain import model
 
 class ContentRepository(abc.ABC):
     @abc.abstractmethod
-    def get_by_id(self, content_unit_id: str) -> model.ContentUnit:
+    def get_by_id(self, content_id: str) -> model.Content:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_all(self) -> List[model.ContentUnit]:
+    def get_all(self) -> List[model.Content]:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add(self, content_unit: model.ContentUnit) -> int:
+    def add(self, content: model.Content) -> int:
         raise NotImplementedError
 
 

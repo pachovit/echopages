@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel
 
 from echopages.application import services
-from echopages.bootstrap import get_content_repo
+from echopages.bootstrap import get_managed_content_repo
 from echopages.domain import repositories
 
 app = FastAPI()
@@ -13,10 +13,10 @@ class Content(BaseModel):
 
 
 class AddContentResponse(BaseModel):
-    content_unit_id: int
+    content_id: int
 
 
-class GetContentUnitResponse(BaseModel):
+class GetContentResponse(BaseModel):
     text: str
 
 
@@ -27,24 +27,24 @@ class GetContentUnitResponse(BaseModel):
 )
 async def add_content(
     content: Content,
-    content_repo: repositories.ContentRepository = Depends(get_content_repo),
+    content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
 ):
     # Simulate adding content
-    content_unit_id = services.add_content(content_repo, content.text)
-    return AddContentResponse(content_unit_id=content_unit_id)
+    content_id = services.add_content(content_repo, content.text)
+    return AddContentResponse(content_id=content_id)
 
 
-@app.get("/content_units/{content_unit_id}", response_model=GetContentUnitResponse)
-async def get_content_unit(
-    content_unit_id: str,
-    content_repo: repositories.ContentRepository = Depends(get_content_repo),
+@app.get("/contents/{content_id}", response_model=GetContentResponse)
+async def get_content(
+    content_id: str,
+    content_repo: repositories.ContentRepository = Depends(get_managed_content_repo),
 ):
-    content_unit = content_repo.get_by_id(content_unit_id)
+    content = content_repo.get_by_id(content_id)
 
     return (
-        GetContentUnitResponse(text=content_unit.text)
-        if content_unit
-        else {"error": f"Content unit with id {content_unit_id} not found"}
+        GetContentResponse(text=content.text)
+        if content
+        else {"error": f"Content unit with id {content_id} not found"}
     )
 
 

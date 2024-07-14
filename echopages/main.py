@@ -26,7 +26,7 @@ if __name__ == "__main__":
         lambda: services.delivery_service(
             digest_repo, content_repo, content_sampler, 1, delivery_system
         ),
-        time_of_day="14:33",
+        time_of_day="07:00",
     )
     scheduler.start()
     uvicorn.run(web.app, host="0.0.0.0", port=8000)

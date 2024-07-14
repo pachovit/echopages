@@ -5,8 +5,8 @@ from echopages.domain import model, repositories
 
 
 def add_content(content_repo: repositories.ContentRepository, content: str) -> str:
-    content_unit_id = content_repo.add(model.ContentUnit(text=content))
-    return content_unit_id
+    content_id = content_repo.add(model.Content(text=content))
+    return content_id
 
 
 def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
@@ -17,9 +17,9 @@ def sample_contents(
     content_repo: repositories.ContentRepository,
     content_sampler: model.ContentSampler,
     number_of_units: int,
-) -> List[model.ContentUnit]:
-    content_units = content_repo.get_all()
-    return content_sampler.sample(content_units, number_of_units)
+) -> List[model.Content]:
+    contents = content_repo.get_all()
+    return content_sampler.sample(contents, number_of_units)
 
 
 def generate_digest(
@@ -30,7 +30,7 @@ def generate_digest(
 ) -> str:
     contents = sample_contents(content_repo, content_sampler, number_of_units)
 
-    digest = model.Digest(id=str(uuid.uuid4()), content_units=contents)
+    digest = model.Digest(id=str(uuid.uuid4()), contents=contents)
     digest_repo.add(digest)
 
     return digest.id

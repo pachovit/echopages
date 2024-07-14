@@ -5,18 +5,18 @@ from echopages.infrastructure import web
 client = TestClient(web.app)
 
 
-def test_add_content_unit():
-    content_unit = "sample content unit 1"
+def test_add_content():
+    content = "sample content unit 1"
     url = "http://127.0.0.1:8000"
 
-    r = client.post(f"{url}/add_content", json={"text": content_unit})
+    r = client.post(f"{url}/add_content", json={"text": content})
     assert r.status_code == 201
 
-    content_unit_id = r.json()["content_unit_id"]
+    content_id = r.json()["content_id"]
 
-    r = client.get(f"{url}/content_units/{content_unit_id}")
+    r = client.get(f"{url}/contents/{content_id}")
     assert r.status_code == 200
-    assert r.json()["text"] == content_unit
+    assert r.json()["text"] == content
 
 
 # def test_configure_schedule():

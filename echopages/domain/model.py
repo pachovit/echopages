@@ -2,7 +2,7 @@ import abc
 from typing import Callable, List, Optional
 
 
-class ContentUnit:
+class Content:
     def __init__(self, id: Optional[int] = None, text: str = "") -> None:
         self.id = id
         self.text = text
@@ -12,11 +12,11 @@ class Digest:
     def __init__(
         self,
         id: Optional[int] = None,
-        content_units: Optional[List[ContentUnit]] = [],
+        contents: Optional[List[Content]] = [],
         sent: Optional[bool] = False,
     ) -> None:
         self.id = id
-        self.content_units = content_units
+        self.contents = contents
         self.sent = sent
 
     def mark_as_sent(self):
@@ -25,9 +25,7 @@ class Digest:
 
 class ContentSampler(abc.ABC):
     @abc.abstractmethod
-    def sample(
-        self, content_units: List[ContentUnit], number_of_units: int
-    ) -> List[ContentUnit]:
+    def sample(self, contents: List[Content], number_of_units: int) -> List[Content]:
         raise NotImplementedError
 
 
