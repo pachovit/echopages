@@ -1,5 +1,5 @@
 from echopages.domain import model
-from echopages.infrastructure import samplers
+from echopages.infrastructure.delivery import samplers
 
 
 def test_simple_content_sampler() -> None:

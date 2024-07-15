@@ -7,7 +7,8 @@ from pydantic import BaseModel, field_validator
 import echopages.config
 from echopages.application import services
 from echopages.domain import repositories
-from echopages.infrastructure import samplers, schedulers, sql
+from echopages.infrastructure.database import sql
+from echopages.infrastructure.delivery import samplers, schedulers
 from echopages.infrastructure.fakes import FakeDigestDeliverySystem
 
 app = FastAPI()
