@@ -1,5 +1,5 @@
 from echopages.domain import model
-from echopages.infrastructure.sql import get_content_repo
+from echopages.infrastructure.database.sql import get_content_repo
 
 
 def test_add_content_returns_id(dummy_db_uri: str) -> None:

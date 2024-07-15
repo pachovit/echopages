@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from time_machine import travel
 from zoneinfo import ZoneInfo
 
-from echopages.infrastructure import schedulers
+from echopages.infrastructure.delivery import schedulers
 
 
 def test_scheduler_works_on_time() -> None:

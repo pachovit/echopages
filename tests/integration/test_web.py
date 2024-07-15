@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 
-from echopages.infrastructure import web
+from echopages.api import endpoints
 
-client = TestClient(web.app)
+client = TestClient(endpoints.app)
 
 
 def test_add_content() -> None:

@@ -3,8 +3,10 @@ import logging
 import uvicorn
 
 import echopages.config
+from echopages.api import endpoints
 from echopages.application import services
-from echopages.infrastructure import samplers, schedulers, sql, web
+from echopages.infrastructure.database import sql
+from echopages.infrastructure.delivery import samplers, schedulers
 from echopages.infrastructure.fakes import (
     FakeDigestDeliverySystem,
 )
@@ -31,4 +33,4 @@ if __name__ == "__main__":
         time_of_day="07:00",
     )
     scheduler.start()
-    uvicorn.run(web.app, host="0.0.0.0", port=8000)
+    uvicorn.run(endpoints.app, host="0.0.0.0", port=8000)

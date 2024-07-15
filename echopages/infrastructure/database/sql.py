@@ -16,7 +16,7 @@ from echopages.domain.repositories import (
     ContentRepository,
     DigestRepository,
 )
-from echopages.infrastructure.orm import metadata, start_mappers
+from echopages.infrastructure.database.orm import metadata, start_mappers
 
 engine = None
 
