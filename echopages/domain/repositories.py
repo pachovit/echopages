@@ -33,24 +33,6 @@ class DigestRepository(abc.ABC):
     def add(self, digest: model.Digest) -> int:
         raise NotImplementedError
 
-
-class UnitOfWork(abc.ABC):
-    content_repo: ContentRepository
-    digest_repo: DigestRepository
-
-    def __enter__(self) -> UnitOfWork:
-        return self
-
-    def __exit__(self, *args) -> None:  # type: ignore
-        self.rollback()
-
-    def commit(self) -> None:
-        self._commit()
-
     @abc.abstractmethod
-    def _commit(self) -> None:
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def rollback(self) -> None:
+    def update(self, digest: model.Digest) -> None:
         raise NotImplementedError

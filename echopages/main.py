@@ -14,14 +14,16 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    unit_of_work = sql.get_unit_of_work(echopages.config.DB_URI)
+    content_repo = sql.get_content_repo(echopages.config.DB_URI)
+    digest_repo = sql.get_digest_repo(echopages.config.DB_URI)
     delivery_system = FakeDigestDeliverySystem()
     content_sampler = samplers.SimpleContentSampler()
 
     # Configure Scheduler
     scheduler = schedulers.SimpleScheduler(
         lambda: services.delivery_service(
-            unit_of_work,
+            content_repo,
+            digest_repo,
             content_sampler,
             echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
             delivery_system,
