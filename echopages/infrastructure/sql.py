@@ -68,6 +68,7 @@ class SQLAlchemyRepository:
 class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
     @handle_session
     def get_by_id(self, content_id: int) -> Optional[model.Content]:
+        assert self.db_session is not None
         result = (
             self.db_session.query(model.Content)
             .filter(model.Content.id == content_id)  # type: ignore
@@ -79,6 +80,7 @@ class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
 
     @handle_session
     def get_all(self) -> List[model.Content]:
+        assert self.db_session is not None
         result = self.db_session.query(model.Content).all()
         for element in result:
             self.db_session.expunge(element)
@@ -86,6 +88,7 @@ class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
 
     @handle_session
     def add(self, content: model.Content) -> int:
+        assert self.db_session is not None
         self.db_session.add(content)
         self.db_session.flush()  # ID is assigned here
         self.db_session.expunge(content)
@@ -96,19 +99,22 @@ class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
 class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
     @handle_session
     def get_by_id(self, digest_id: int) -> Optional[model.Digest]:
+        assert self.db_session is not None
         result = (
             self.db_session.query(model.Digest)
             .filter(model.Digest.id == digest_id)  # type: ignore
             .first()
         )
-        for el in result.contents:
-            self.db_session.expunge(el)
-        self.db_session.expunge(result)
+        if result is not None and result.contents is not None:
+            for el in result.contents:
+                self.db_session.expunge(el)
+            self.db_session.expunge(result)
 
         return result
 
     @handle_session
     def get_all(self) -> List[model.Digest]:
+        assert self.db_session is not None
         result = self.db_session.query(model.Digest).all()
         for element in result:
             self.db_session.expunge(element)
@@ -116,6 +122,7 @@ class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
 
     @handle_session
     def add(self, digest: model.Digest) -> int:
+        assert self.db_session is not None
         self.db_session.add(digest)
         self.db_session.flush()  # ID is assigned here
         self.db_session.expunge(digest)
@@ -124,5 +131,6 @@ class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
 
     @handle_session
     def update(self, digest: model.Digest) -> None:
+        assert self.db_session is not None
         self.db_session.add(digest)
         self.db_session.expunge(digest)
