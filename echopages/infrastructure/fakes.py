@@ -42,17 +42,7 @@ class FakeDigestRepository(repositories.DigestRepository):
         self.digests.append(digest)
         return digest.id
 
-
-class FakeUnitOfWork(repositories.UnitOfWork):
-    def __init__(self) -> None:
-        self.content_repo = FakeContentRepository([])
-        self.digest_repo = FakeDigestRepository([])
-        self.committed = False
-
-    def _commit(self) -> None:
-        self.committed = True
-
-    def rollback(self) -> None:
+    def update(self, digest: model.Digest) -> None:
         pass
 
 

@@ -32,19 +32,21 @@ class GetContentResponse(BaseModel):
 )
 async def add_content(
     content: Content,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
 ) -> AddContentResponse:
     # Simulate adding content
-    content_id = services.add_content(uow, content.text)
+    content_id = services.add_content(content_repo, content.text)
     return AddContentResponse(content_id=content_id)
 
 
 @app.get("/contents/{content_id}", response_model=GetContentResponse)
 async def get_content(
     content_id: int,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
 ) -> GetContentResponse:
-    content = services.get_content_by_id(unit_of_work=uow, content_id=content_id)
+    content = services.get_content_by_id(
+        content_repo=content_repo, content_id=content_id
+    )
 
     if content is None:
         text = "Content Not Found"
@@ -64,13 +66,18 @@ class TriggerDigestResponse(BaseModel):
 @app.post("/trigger_digest")
 async def trigger_digest(
     trigger_digest_request: TriggerDigest,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
+    digest_repo: repositories.DigestRepository = Depends(sql.get_digest_repo),
 ) -> TriggerDigestResponse:
     content_sampler = samplers.SimpleContentSampler()
     digest_delivery_system = FakeDigestDeliverySystem()
 
     digest = services.delivery_service(
-        uow, content_sampler, trigger_digest_request.n_units, digest_delivery_system
+        content_repo,
+        digest_repo,
+        content_sampler,
+        trigger_digest_request.n_units,
+        digest_delivery_system,
     )
 
     assert digest is not None
@@ -94,13 +101,15 @@ class ConfigureScheduleResponse(BaseModel):
 @app.post("/configure_schedule")
 async def configure_schedule(
     schedule: Schedule,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
+    digest_repo: repositories.DigestRepository = Depends(sql.get_digest_repo),
 ) -> ConfigureScheduleResponse:
     content_sampler = samplers.SimpleContentSampler()
 
     scheduler = schedulers.SimpleScheduler(
         lambda: services.generate_digest(
-            uow,
+            content_repo,
+            digest_repo,
             content_sampler,
             echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
         )
