@@ -18,4 +18,5 @@ EchoPages is a digest delivery system designed to provide users with scheduled s
 * Receive digest on time
 
 # Backlog
+* Create a formatter, put it in the service and change the api for the digest delivery to receive a string
 * Endpoints for configuration
