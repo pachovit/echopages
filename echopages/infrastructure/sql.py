@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import List, Optional
+from typing import Any, Callable, List, Optional, TypeVar
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import (
@@ -21,7 +21,7 @@ from echopages.infrastructure.orm import metadata, start_mappers
 engine = None
 
 
-def get_session_factory(db_uri: str) -> sessionmaker[Session]:
+def get_session_factory(db_uri: str) -> scoped_session[Session]:
     global engine
     if engine is None:
         engine = create_engine(db_uri)
@@ -38,12 +38,15 @@ def get_digest_repo(db_uri: str = echopages.config.DB_URI) -> SQLDigestRepositor
     return SQLDigestRepository(get_session_factory(db_uri))
 
 
-def handle_session(func):
+T = TypeVar("T")  # Generic return type
+
+
+def handle_session(func: Callable[..., T]) -> Callable[..., T]:
     @wraps(func)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self: "SQLAlchemyRepository", *args: Any, **kwargs: Any) -> T:
         self.db_session = self.session_factory()
         try:
-            result = func(self, *args, **kwargs)
+            result: T = func(self, *args, **kwargs)
             self.db_session.commit()
             return result
         except Exception as e:
@@ -57,8 +60,9 @@ def handle_session(func):
 
 
 class SQLAlchemyRepository:
-    def __init__(self, session_factory: sessionmaker[Session]) -> None:
+    def __init__(self, session_factory: scoped_session[Session]) -> None:
         self.session_factory = session_factory
+        self.db_session: Optional[Session] = None
 
 
 class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
