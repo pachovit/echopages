@@ -11,6 +11,7 @@ from echopages.infrastructure.delivery import samplers, schedulers
 from echopages.infrastructure.fakes import (
     FakeContentRepository,
     FakeDigestDeliverySystem,
+    FakeDigestFormatter,
     FakeDigestRepository,
 )
 
@@ -103,28 +104,27 @@ def test_generate_digest() -> None:
     assert digests[0].sent is False
 
 
-def test_send_digest() -> None:
+def test_deliver_digest() -> None:
     contents = ["content unit 1", "content unit 2", "content unit 3"]
     _, content_objects = setup_contents(contents)
     digest_repo = FakeDigestRepository([])
 
     delivery_system = FakeDigestDeliverySystem()
     digest = model.Digest(id=1, contents=content_objects)
+    digest.contents_str = "content unit 1,content unit 2,content unit 3"
 
-    digest_repo.add(digest)
+    services.deliver_digest(delivery_system, digest_repo, digest)
 
-    services.send_digest(delivery_system, digest_repo, 1)
-
-    digests = digest_repo.get_all()
     assert delivery_system.sent_contents == [
         "content unit 1,content unit 2,content unit 3"
     ]
-    assert digests[0].sent is True
+    assert digest.sent is True
 
 
 def test_all_flow() -> None:
     content_repo = FakeContentRepository([])
     digest_repo = FakeDigestRepository([])
+    digest_formatter = FakeDigestFormatter()
     delivery_system = FakeDigestDeliverySystem()
     content_sampler = samplers.SimpleContentSampler()
     samplers.CountIndex.value = 0
@@ -143,7 +143,12 @@ def test_all_flow() -> None:
         # Configure Scheduler
         scheduler = schedulers.SimpleScheduler(
             lambda: services.delivery_service(
-                content_repo, digest_repo, content_sampler, 1, delivery_system
+                content_repo,
+                digest_repo,
+                content_sampler,
+                1,
+                digest_formatter,
+                delivery_system,
             ),
             sleep_interval=0.05,
         )

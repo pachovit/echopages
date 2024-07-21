@@ -71,18 +71,20 @@ def generate_digest(
     return digest_id
 
 
-def send_digest(
+def deliver_digest(
     digest_delivery_system: model.DigestDeliverySystem,
     digest_repo: repositories.DigestRepository,
-    digest_id: int,
+    digest: model.Digest,
 ) -> None:
-    digest = digest_repo.get_by_id(digest_id)
-    if digest is None:
-        raise ValueError(f"Digest with id {digest_id} not found")
-
-    digest_delivery_system.deliver_digest(digest)
+    digest_delivery_system.deliver_digest(digest.contents_str)
     digest.mark_as_sent()
     digest_repo.update(digest)
+
+
+def format_digest(digest_formatter: model.DigestFormatter, digest: model.Digest):
+    digest_str = digest_formatter.format(digest)
+    digest.store_content_str(digest_str)
+    return digest
 
 
 def delivery_service(
@@ -90,12 +92,20 @@ def delivery_service(
     digest_repo: repositories.DigestRepository,
     content_sampler: model.ContentSampler,
     number_of_units: int,
+    digest_formatter: model.DigestFormatter,
     digest_delivery_system: model.DigestDeliverySystem,
 ) -> model.Digest:
     digest_id = generate_digest(
         content_repo, digest_repo, content_sampler, number_of_units
     )
-    send_digest(digest_delivery_system, digest_repo, digest_id)
+
     digest = get_digest_by_id(digest_repo, digest_id)
     assert digest is not None
+
+    digest = format_digest(digest_formatter, digest)
+
+    digest_repo.update(digest)
+
+    deliver_digest(digest_delivery_system, digest_repo, digest)
+
     return digest

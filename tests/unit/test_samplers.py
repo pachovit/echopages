@@ -3,6 +3,7 @@ from echopages.infrastructure.delivery import samplers
 
 
 def test_simple_content_sampler() -> None:
+    samplers.CountIndex.value = 0
     contents = [
         model.Content(id=0, text="content unit 1"),
         model.Content(id=1, text="content unit 2"),
