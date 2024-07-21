@@ -10,7 +10,7 @@ from echopages.application import services
 from echopages.domain import model, repositories
 from echopages.infrastructure.database import sql
 from echopages.infrastructure.delivery import samplers, schedulers
-from echopages.infrastructure.fakes import FakeDigestFormatter
+from echopages.infrastructure.delivery.delivery_system import HTMLDigestFormatter
 
 app = FastAPI()
 
@@ -75,7 +75,7 @@ async def trigger_digest(
     ),
 ) -> TriggerDigestResponse:
     content_sampler = samplers.SimpleContentSampler()
-    digest_formatter = FakeDigestFormatter()
+    digest_formatter = HTMLDigestFormatter()
 
     digest = services.delivery_service(
         content_repo,

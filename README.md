@@ -18,5 +18,10 @@ EchoPages is a digest delivery system designed to provide users with scheduled s
 * Receive digest on time
 
 # Backlog
-* Create a formatter, put it in the service and change the api for the digest delivery to receive a string
+* Unit tests are not using the FakeDeliverySystem, they're using the DiskDeliverySystem
+* There's no unit tests for formatting
+* HTML viewer would be nice
+* Automate my manual tests
+* Add the formatter to the bootstrap
+* Test email sending
 * Endpoints for configuration
