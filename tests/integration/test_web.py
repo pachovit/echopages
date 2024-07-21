@@ -1,11 +1,12 @@
 from fastapi.testclient import TestClient
+from httpx import Response
 
 from echopages.api import endpoints
 
 client = TestClient(endpoints.app)
 
 
-def _add_content(url, content: str) -> None:
+def _add_content(url: str, content: str) -> Response:
     r = client.post(f"{url}/add_content", json={"text": content})
     assert r.status_code == 201
     return r

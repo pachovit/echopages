@@ -60,6 +60,6 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
 
         self.sent_contents: List[str] = []
 
-    def deliver_digest(self, digest_str: model.Digest) -> None:
+    def deliver_digest(self, digest_str: str) -> None:
         self.sent_contents.append(digest_str)
         logger.info(f"Sent contents {digest_str}")

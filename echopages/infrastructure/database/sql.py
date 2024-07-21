@@ -98,9 +98,11 @@ class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
 
 class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
     def _expunge_digest(self, digest: model.Digest) -> None:
-        for content in digest.contents:
-            self.db_session.expunge(content)
-        self.db_session.expunge(digest)
+        assert self.db_session is not None
+        if digest is not None and digest.contents is not None:
+            for content in digest.contents:
+                self.db_session.expunge(content)
+            self.db_session.expunge(digest)
 
     @handle_session
     def get_by_id(self, digest_id: int) -> Optional[model.Digest]:
@@ -110,8 +112,8 @@ class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
             .filter(model.Digest.id == digest_id)  # type: ignore
             .first()
         )
-        if result is not None and result.contents is not None:
-            self._expunge_digest(result)
+        assert result is not None
+        self._expunge_digest(result)
         return result
 
     @handle_session
