@@ -9,6 +9,7 @@ from echopages.infrastructure.database import sql
 from echopages.infrastructure.delivery import samplers, schedulers
 from echopages.infrastructure.fakes import (
     FakeDigestDeliverySystem,
+    FakeDigestFormatter,
 )
 
 logging.basicConfig(
@@ -18,6 +19,7 @@ logging.basicConfig(
 if __name__ == "__main__":
     content_repo = sql.get_content_repo(echopages.config.DB_URI)
     digest_repo = sql.get_digest_repo(echopages.config.DB_URI)
+    digest_formatter = FakeDigestFormatter()
     delivery_system = FakeDigestDeliverySystem()
     content_sampler = samplers.SimpleContentSampler()
 
@@ -28,6 +30,7 @@ if __name__ == "__main__":
             digest_repo,
             content_sampler,
             echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
+            digest_formatter,
             delivery_system,
         ),
         time_of_day="07:00",

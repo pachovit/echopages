@@ -81,9 +81,14 @@ def deliver_digest(
     digest_repo.update(digest)
 
 
-def format_digest(digest_formatter: model.DigestFormatter, digest: model.Digest):
+def format_digest(
+    digest_repo: repositories.DigestRepository,
+    digest_formatter: model.DigestFormatter,
+    digest: model.Digest,
+) -> model.Digest:
     digest_str = digest_formatter.format(digest)
     digest.store_content_str(digest_str)
+    digest_repo.update(digest)
     return digest
 
 
@@ -102,10 +107,7 @@ def delivery_service(
     digest = get_digest_by_id(digest_repo, digest_id)
     assert digest is not None
 
-    digest = format_digest(digest_formatter, digest)
-
-    digest_repo.update(digest)
-
+    digest = format_digest(digest_repo, digest_formatter, digest)
     deliver_digest(digest_delivery_system, digest_repo, digest)
 
     return digest
