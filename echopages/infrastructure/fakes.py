@@ -46,16 +46,20 @@ class FakeDigestRepository(repositories.DigestRepository):
         pass
 
 
+class FakeDigestFormatter(model.DigestFormatter):
+    def format(self, digest: model.Digest) -> str:
+        if digest.contents:
+            return ",".join([content.text for content in digest.contents])
+        else:
+            raise ValueError("Digest Is Empty")
+
+
 class FakeDigestDeliverySystem(model.DigestDeliverySystem):
     def __init__(self) -> None:
         super().__init__()
 
         self.sent_contents: List[str] = []
 
-    def deliver_digest(self, digest: model.Digest) -> None:
-        if digest.contents:
-            content_to_send = ",".join([content.text for content in digest.contents])
-        else:
-            raise ValueError("Digest Is Empty")
-        self.sent_contents.append(content_to_send)
-        logger.info(f"Sent contents {content_to_send}")
+    def deliver_digest(self, digest_str: model.Digest) -> None:
+        self.sent_contents.append(digest_str)
+        logger.info(f"Sent contents {digest_str}")

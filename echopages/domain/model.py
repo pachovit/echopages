@@ -18,9 +18,13 @@ class Digest:
         self.id = id
         self.contents = contents
         self.sent = sent
+        self.contents_str: str = ""
 
     def mark_as_sent(self) -> None:
         self.sent = True
+
+    def store_content_str(self, content_str: str) -> None:
+        self.contents_str = content_str
 
 
 class ContentSampler(abc.ABC):
@@ -29,9 +33,15 @@ class ContentSampler(abc.ABC):
         raise NotImplementedError
 
 
+class DigestFormatter(abc.ABC):
+    @abc.abstractmethod
+    def format(self, digest: Digest) -> str:
+        raise NotImplementedError
+
+
 class DigestDeliverySystem(abc.ABC):
     @abc.abstractmethod
-    def deliver_digest(self, digest: Digest) -> None:
+    def deliver_digest(self, digest_str: str) -> None:
         raise NotImplementedError
 
 

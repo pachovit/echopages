@@ -5,11 +5,17 @@ from echopages.api import endpoints
 client = TestClient(endpoints.app)
 
 
+def _add_content(url, content: str) -> None:
+    r = client.post(f"{url}/add_content", json={"text": content})
+    assert r.status_code == 201
+    return r
+
+
 def test_add_content() -> None:
     content = "sample content unit 1"
     url = "http://127.0.0.1:8000"
 
-    r = client.post(f"{url}/add_content", json={"text": content})
+    r = _add_content(url, content)
     assert r.status_code == 201
 
     content_id = r.json()["content_id"]
@@ -21,6 +27,7 @@ def test_add_content() -> None:
 
 def test_trigger_digest() -> None:
     url = "http://127.0.0.1:8000"
+    _add_content(url, "sample content 123")
 
     r = client.post(f"{url}/trigger_digest", json={"n_units": 2})
 

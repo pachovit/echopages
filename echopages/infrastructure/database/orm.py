@@ -24,6 +24,7 @@ digests = Table(
     "digests",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("contents_str", String),
     Column("sent", Boolean, default=False),
 )
 digest_content_association = Table(
