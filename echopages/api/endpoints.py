@@ -5,11 +5,12 @@ from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel, field_validator
 
 import echopages.config
+from echopages import bootstrap
 from echopages.application import services
-from echopages.domain import repositories
+from echopages.domain import model, repositories
 from echopages.infrastructure.database import sql
 from echopages.infrastructure.delivery import samplers, schedulers
-from echopages.infrastructure.fakes import FakeDigestDeliverySystem, FakeDigestFormatter
+from echopages.infrastructure.fakes import FakeDigestFormatter
 
 app = FastAPI()
 
@@ -69,9 +70,11 @@ async def trigger_digest(
     trigger_digest_request: TriggerDigest,
     content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
     digest_repo: repositories.DigestRepository = Depends(sql.get_digest_repo),
+    digest_delivery_system: model.DigestDeliverySystem = Depends(
+        bootstrap.get_digest_delivery_system
+    ),
 ) -> TriggerDigestResponse:
     content_sampler = samplers.SimpleContentSampler()
-    digest_delivery_system = FakeDigestDeliverySystem()
     digest_formatter = FakeDigestFormatter()
 
     digest = services.delivery_service(

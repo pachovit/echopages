@@ -4,6 +4,7 @@ from functools import wraps
 from typing import Any, Callable, List, Optional, TypeVar
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import (
     Session,
     scoped_session,
@@ -101,7 +102,11 @@ class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
         assert self.db_session is not None
         if digest is not None and digest.contents is not None:
             for content in digest.contents:
-                self.db_session.expunge(content)
+                try:
+                    self.db_session.expunge(content)
+                except InvalidRequestError:
+                    pass
+
             self.db_session.expunge(digest)
 
     @handle_session
