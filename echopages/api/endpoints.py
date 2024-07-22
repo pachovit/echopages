@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel, field_validator
@@ -34,26 +33,24 @@ class GetContentResponse(BaseModel):
 )
 async def add_content(
     content: Content,
-    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
 ) -> AddContentResponse:
     # Simulate adding content
-    content_id = services.add_content(content_repo, content.text)
+    content_id = services.add_content(uow, content.text)
     return AddContentResponse(content_id=content_id)
 
 
 @app.get("/contents/{content_id}", response_model=GetContentResponse)
 async def get_content(
     content_id: int,
-    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
 ) -> GetContentResponse:
-    content = services.get_content_by_id(
-        content_repo=content_repo, content_id=content_id
-    )
+    content_str = services.get_content_by_id(uow, content_id)
 
-    if content is None:
+    if content_str is None:
         text = "Content Not Found"
     else:
-        text = content.text
+        text = content_str
     return GetContentResponse(text=text)
 
 
@@ -62,14 +59,13 @@ class TriggerDigest(BaseModel):
 
 
 class TriggerDigestResponse(BaseModel):
-    digest: List[str]
+    digest_str: str
 
 
 @app.post("/trigger_digest")
 async def trigger_digest(
     trigger_digest_request: TriggerDigest,
-    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
-    digest_repo: repositories.DigestRepository = Depends(sql.get_digest_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
     digest_delivery_system: model.DigestDeliverySystem = Depends(
         bootstrap.get_digest_delivery_system
     ),
@@ -77,18 +73,16 @@ async def trigger_digest(
     content_sampler = samplers.SimpleContentSampler()
     digest_formatter = HTMLDigestFormatter()
 
-    digest = services.delivery_service(
-        content_repo,
-        digest_repo,
+    digest_str = services.delivery_service(
+        uow,
         content_sampler,
         trigger_digest_request.n_units,
         digest_formatter,
         digest_delivery_system,
     )
 
-    assert digest is not None
-    assert digest.contents is not None
-    return TriggerDigestResponse(digest=[content.text for content in digest.contents])
+    assert digest_str is not None
+    return TriggerDigestResponse(digest_str=digest_str)
 
 
 class Schedule(BaseModel):
@@ -107,15 +101,13 @@ class ConfigureScheduleResponse(BaseModel):
 @app.post("/configure_schedule")
 async def configure_schedule(
     schedule: Schedule,
-    content_repo: repositories.ContentRepository = Depends(sql.get_content_repo),
-    digest_repo: repositories.DigestRepository = Depends(sql.get_digest_repo),
+    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
 ) -> ConfigureScheduleResponse:
     content_sampler = samplers.SimpleContentSampler()
 
     scheduler = schedulers.SimpleScheduler(
         lambda: services.generate_digest(
-            content_repo,
-            digest_repo,
+            uow,
             content_sampler,
             echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
         )

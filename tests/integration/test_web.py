@@ -8,7 +8,7 @@ client = TestClient(endpoints.app)
 
 def _add_content(url: str, content: str) -> Response:
     r = client.post(f"{url}/add_content", json={"text": content})
-    assert r.status_code == 201
+    assert r.status_code == 201, f"Failed with status {r.status_code}: {r.json()}"
     return r
 
 
@@ -33,7 +33,7 @@ def test_trigger_digest() -> None:
     r = client.post(f"{url}/trigger_digest", json={"n_units": 2})
 
     assert r.status_code == 200
-    assert len(r.json()["digest"]) == 2
+    assert "sample content 123" in r.json()["digest_str"]
 
 
 def test_configure_schedule() -> None:

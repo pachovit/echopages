@@ -4,43 +4,26 @@ from echopages.domain import model, repositories
 
 
 def add_content(
-    content_repo: repositories.ContentRepository,
+    uow: repositories.UnitOfWork,
     content: str,
 ) -> int:
-    content_id = content_repo.add(model.Content(text=content))
-
+    with uow:
+        content_id = uow.content_repo.add(model.Content(text=content))
+        uow.commit()
     return content_id
 
 
 def get_content_by_id(
-    content_repo: repositories.ContentRepository,
+    uow: repositories.UnitOfWork,
     content_id: int,
-) -> Optional[model.Content]:
-    content = content_repo.get_by_id(content_id)
+) -> Optional[str]:
+    with uow:
+        content = uow.content_repo.get_by_id(content_id)
 
-    if content is None:
-        return None
-    new_content = model.Content(id=content_id, text=content.text)
-    return new_content
-
-
-def get_digest_by_id(
-    digest_repo: repositories.DigestRepository,
-    digest_id: int,
-) -> Optional[model.Digest]:
-    digest = digest_repo.get_by_id(digest_id)
-    if digest is None:
-        return None
-    contents = digest.contents
-    if contents is None:
-        contents = []
-    new_content = model.Digest(
-        id=digest.id,
-        contents=[
-            model.Content(id=content.id, text=content.text) for content in contents
-        ],
-    )
-    return new_content
+        if content is None:
+            return None
+        content_str = content.text
+    return content_str
 
 
 def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
@@ -48,66 +31,68 @@ def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
 
 
 def sample_contents(
-    content_repo: repositories.ContentRepository,
+    uow: repositories.UnitOfWork,
     content_sampler: model.ContentSampler,
     number_of_units: int,
 ) -> List[model.Content]:
-    contents = content_repo.get_all()
+    with uow:
+        contents = uow.content_repo.get_all()
     return content_sampler.sample(contents, number_of_units)
 
 
 def generate_digest(
-    content_repo: repositories.ContentRepository,
-    digest_repo: repositories.DigestRepository,
+    uow: repositories.UnitOfWork,
     content_sampler: model.ContentSampler,
     number_of_units: int,
 ) -> int:
-    contents = sample_contents(content_repo, content_sampler, number_of_units)
+    contents = sample_contents(uow, content_sampler, number_of_units)
 
     digest = model.Digest(contents=contents)
-
-    digest_id = digest_repo.add(digest)
+    with uow:
+        digest_id = uow.digest_repo.add(digest)
+        uow.commit()
 
     return digest_id
 
 
 def deliver_digest(
     digest_delivery_system: model.DigestDeliverySystem,
-    digest_repo: repositories.DigestRepository,
-    digest: model.Digest,
+    uow: repositories.UnitOfWork,
+    digest_id: int,
 ) -> None:
-    digest_delivery_system.deliver_digest(digest.contents_str)
-    digest.mark_as_sent()
-    digest_repo.update(digest)
+    with uow:
+        digest = uow.digest_repo.get_by_id(digest_id)
+        digest_delivery_system.deliver_digest(digest.contents_str)
+        digest.mark_as_sent()
+        uow.digest_repo.update(digest)
+        uow.commit()
 
 
 def format_digest(
-    digest_repo: repositories.DigestRepository,
+    uow: repositories.UnitOfWork,
     digest_formatter: model.DigestFormatter,
-    digest: model.Digest,
-) -> model.Digest:
-    digest_str = digest_formatter.format(digest)
-    digest.store_content_str(digest_str)
-    digest_repo.update(digest)
-    return digest
+    digest_id: int,
+) -> str:
+    with uow:
+        digest = uow.digest_repo.get_by_id(digest_id)
+        digest_str = digest_formatter.format(digest)
+        digest.store_content_str(digest_str)
+        uow.digest_repo.update(digest)
+        uow.commit()
+        content_str = digest.contents_str
+    return content_str
 
 
 def delivery_service(
-    content_repo: repositories.ContentRepository,
-    digest_repo: repositories.DigestRepository,
+    uow: repositories.UnitOfWork,
     content_sampler: model.ContentSampler,
     number_of_units: int,
     digest_formatter: model.DigestFormatter,
     digest_delivery_system: model.DigestDeliverySystem,
-) -> model.Digest:
-    digest_id = generate_digest(
-        content_repo, digest_repo, content_sampler, number_of_units
-    )
+) -> str:
+    with uow:
+        digest_id = generate_digest(uow, content_sampler, number_of_units)
 
-    digest = get_digest_by_id(digest_repo, digest_id)
-    assert digest is not None
-
-    digest = format_digest(digest_repo, digest_formatter, digest)
-    deliver_digest(digest_delivery_system, digest_repo, digest)
-
-    return digest
+        content_str = format_digest(uow, digest_formatter, digest_id)
+        deliver_digest(digest_delivery_system, uow, digest_id)
+    return content_str

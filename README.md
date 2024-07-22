@@ -16,12 +16,3 @@ EchoPages is a digest delivery system designed to provide users with scheduled s
 * Add content
 * Configure schedule
 * Receive digest on time
-
-# Backlog
-* Unit tests are not using the FakeDeliverySystem, they're using the DiskDeliverySystem
-* There's no unit tests for formatting
-* HTML viewer would be nice
-* Automate my manual tests
-* Add the formatter to the bootstrap
-* Test email sending
-* Endpoints for configuration

@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from functools import wraps
-from typing import Any, Callable, List, Optional, TypeVar
+from typing import List, Optional
 
 from sqlalchemy import create_engine
-from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import (
     Session,
     scoped_session,
@@ -16,6 +14,7 @@ from echopages.domain import model
 from echopages.domain.repositories import (
     ContentRepository,
     DigestRepository,
+    UnitOfWork,
 )
 from echopages.infrastructure.database.orm import metadata, start_mappers
 
@@ -31,43 +30,16 @@ def get_session_factory(db_uri: str) -> scoped_session[Session]:
     return scoped_session(sessionmaker(bind=engine))
 
 
-def get_content_repo(db_uri: str = echopages.config.DB_URI) -> SQLContentRepository:
-    return SQLContentRepository(get_session_factory(db_uri))
+def get_unit_of_work(db_uri: Optional[str] = None) -> SQLUnitOfWork:
+    if db_uri is None:
+        db_uri = echopages.config.DB_URI
+    return SQLUnitOfWork(get_session_factory(db_uri))
 
 
-def get_digest_repo(db_uri: str = echopages.config.DB_URI) -> SQLDigestRepository:
-    return SQLDigestRepository(get_session_factory(db_uri))
+class SQLContentRepository(ContentRepository):
+    def __init__(self, db_session: Optional[Session] = None):
+        self.db_session = db_session
 
-
-T = TypeVar("T")  # Generic return type
-
-
-def handle_session(func: Callable[..., T]) -> Callable[..., T]:
-    @wraps(func)
-    def wrapper(self: "SQLAlchemyRepository", *args: Any, **kwargs: Any) -> T:
-        self.db_session = self.session_factory()
-        try:
-            result: T = func(self, *args, **kwargs)
-            self.db_session.commit()
-            return result
-        except Exception as e:
-            self.db_session.rollback()
-            raise e
-        finally:
-            self.db_session.close()  # Assuming each session should be closed after the operation
-            self.db_session = None
-
-    return wrapper
-
-
-class SQLAlchemyRepository:
-    def __init__(self, session_factory: scoped_session[Session]) -> None:
-        self.session_factory = session_factory
-        self.db_session: Optional[Session] = None
-
-
-class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
-    @handle_session
     def get_by_id(self, content_id: int) -> Optional[model.Content]:
         assert self.db_session is not None
         result = (
@@ -75,19 +47,13 @@ class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
             .filter(model.Content.id == content_id)  # type: ignore
             .first()
         )
-        self.db_session.expunge(result)
-
         return result
 
-    @handle_session
     def get_all(self) -> List[model.Content]:
         assert self.db_session is not None
         result = self.db_session.query(model.Content).all()
-        for element in result:
-            self.db_session.expunge(element)
         return result
 
-    @handle_session
     def add(self, content: model.Content) -> int:
         assert self.db_session is not None
         self.db_session.add(content)
@@ -97,19 +63,10 @@ class SQLContentRepository(ContentRepository, SQLAlchemyRepository):
         return content.id
 
 
-class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
-    def _expunge_digest(self, digest: model.Digest) -> None:
-        assert self.db_session is not None
-        if digest is not None and digest.contents is not None:
-            for content in digest.contents:
-                try:
-                    self.db_session.expunge(content)
-                except InvalidRequestError:
-                    pass
+class SQLDigestRepository(DigestRepository):
+    def __init__(self, db_session: Optional[Session] = None):
+        self.db_session = db_session
 
-            self.db_session.expunge(digest)
-
-    @handle_session
     def get_by_id(self, digest_id: int) -> Optional[model.Digest]:
         assert self.db_session is not None
         result = (
@@ -118,28 +75,43 @@ class SQLDigestRepository(DigestRepository, SQLAlchemyRepository):
             .first()
         )
         assert result is not None
-        self._expunge_digest(result)
         return result
 
-    @handle_session
     def get_all(self) -> List[model.Digest]:
         assert self.db_session is not None
         result = self.db_session.query(model.Digest).all()
-        for digest in result:
-            self._expunge_digest(digest)
         return result
 
-    @handle_session
     def add(self, digest: model.Digest) -> int:
         assert self.db_session is not None
         self.db_session.add(digest)
         self.db_session.flush()  # ID is assigned here
-        self._expunge_digest(digest)
         assert digest.id is not None
         return digest.id
 
-    @handle_session
     def update(self, digest: model.Digest) -> None:
         assert self.db_session is not None
         self.db_session.add(digest)
-        self._expunge_digest(digest)
+
+
+class SQLUnitOfWork(UnitOfWork):
+    def __init__(self, session_factory: sessionmaker[Session]) -> None:
+        super().__init__()
+        self.session_factory = session_factory
+
+    def __enter__(self) -> UnitOfWork:
+        if not self.entered:
+            self.session: Session = self.session_factory()
+            self.content_repo = SQLContentRepository(self.session)
+            self.digest_repo = SQLDigestRepository(self.session)
+        return super().__enter__()
+
+    def __exit__(self, *args) -> None:  # type: ignore
+        super().__exit__(*args)
+        self.session.close()
+
+    def _commit(self) -> None:
+        self.session.commit()
+
+    def rollback(self) -> None:
+        self.session.rollback()

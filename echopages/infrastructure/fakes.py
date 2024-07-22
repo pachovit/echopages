@@ -46,6 +46,19 @@ class FakeDigestRepository(repositories.DigestRepository):
         pass
 
 
+class FakeUnitOfWork(repositories.UnitOfWork):
+    def __init__(self) -> None:
+        self.content_repo = FakeContentRepository([])
+        self.digest_repo = FakeDigestRepository([])
+        self.committed = False
+
+    def _commit(self) -> None:
+        self.committed = True
+
+    def rollback(self) -> None:
+        pass
+
+
 class FakeDigestFormatter(model.DigestFormatter):
     def format(self, digest: model.Digest) -> str:
         if digest.contents:
