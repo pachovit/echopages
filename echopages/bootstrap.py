@@ -14,6 +14,11 @@ def get_digest_delivery_system() -> DigestDeliverySystem:
         return delivery_system.DiskDigestDeliverySystem(
             echopages.config.DISK_DELIVERY_SYSTEM_DIRECTORY
         )
+
+    if echopages.config.DELIVERY_SYSTEM == "PostmarkDigestDeliverySystem":
+        return delivery_system.PostmarkDigestDeliverySystem(
+            echopages.config.RECIPIENT_EMAIL
+        )
     raise NotImplementedError("No such delivery system")
 
 
