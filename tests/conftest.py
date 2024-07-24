@@ -18,8 +18,6 @@ def dummy_db_uri() -> Generator[None, None, None]:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def fake_delivery_system() -> Generator[str, None, None]:
-    os.environ["DELIVERY_SYSTEM"] = "FakeDigestDeliverySystem"
-    yield "FakeDigestDeliverySystem"
-
-    os.environ.pop("DELIVERY_SYSTEM")
+def fake_delivery_system() -> Generator[None, None, None]:
+    with patch("echopages.config.DELIVERY_SYSTEM", "FakeDigestDeliverySystem"):
+        yield
