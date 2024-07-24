@@ -1,8 +1,9 @@
 import os
 
 DB_URI = os.environ.get("DB_URI", "echopages.db")
-DELIVERY_SYSTEM = os.environ.get("DELIVERY_SYSTEM", "DiskDigestDeliverySystem")
+DELIVERY_SYSTEM = os.environ.get("DELIVERY_SYSTEM", "PostmarkDigestDeliverySystem")
 DISK_DELIVERY_SYSTEM_DIRECTORY = os.environ.get(
     "DISK_DELIVERY_SYSTEM_DIRECTORY", "./digests"
 )
+RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "hello@echopages.com")
 NUMBER_OF_UNITS_PER_DIGEST = 1

@@ -4,6 +4,7 @@ import uuid
 from typing import List
 
 from jinja2 import Template
+from postmarker.core import PostmarkClient
 
 from echopages.domain.model import Content, DigestDeliverySystem, DigestFormatter
 
@@ -22,24 +23,24 @@ class HTMLDigestFormatter(DigestFormatter):
         return template.render(contents=contents)
 
 
-# class PostmarkDigestDeliverySystem(DigestDeliverySystem):
-#     def __init__(self, recipient_email: str) -> None:
-#         self.recipient_email = recipient_email
+class PostmarkDigestDeliverySystem(DigestDeliverySystem):
+    def __init__(self, recipient_email: str) -> None:
+        self.recipient_email = recipient_email
 
-#     def deliver_digest(self, digest_str: str) -> None:
-#         """Sends an email to the specified recipient with the provided digest
-#         content."""
+    def deliver_digest(self, digest_str: str) -> None:
+        """Sends an email to the specified recipient with the provided digest
+        content."""
 
-#         app_email_address = os.getenv("APP_EMAIL_ADDRESS")
-#         api_token = os.getenv("POSTMARK_SERVER_API_TOKEN")
+        app_email_address = os.getenv("APP_EMAIL_ADDRESS")
+        api_token = os.getenv("POSTMARK_SERVER_API_TOKEN")
 
-#         pm = PostmarkClient(server_token=api_token)
-#         pm.emails.send(
-#             From=app_email_address,
-#             To=self.recipient_email,
-#             Subject="EchoPages Digest",
-#             HtmlBody=digest_str,
-#         )
+        pm = PostmarkClient(server_token=api_token)
+        pm.emails.send(
+            From=app_email_address,
+            To=self.recipient_email,
+            Subject="EchoPages Digest",
+            HtmlBody=digest_str,
+        )
 
 
 class DiskDigestDeliverySystem(DigestDeliverySystem):
