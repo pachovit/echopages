@@ -60,9 +60,9 @@ class FakeUnitOfWork(repositories.UnitOfWork):
 
 
 class FakeDigestFormatter(model.DigestFormatter):
-    def format(self, digest: model.Digest) -> str:
-        if digest.contents:
-            return ",".join([content.text for content in digest.contents])
+    def format(self, contents: List[model.Content]) -> str:
+        if contents:
+            return ",".join([content.text for content in contents])
         else:
             raise ValueError("Digest Is Empty")
 

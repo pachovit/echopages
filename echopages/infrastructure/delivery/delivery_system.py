@@ -1,24 +1,25 @@
 import logging
 import os
 import uuid
+from typing import List
 
 from jinja2 import Template
 
-from echopages.domain.model import Digest, DigestDeliverySystem, DigestFormatter
+from echopages.domain.model import Content, DigestDeliverySystem, DigestFormatter
 
 logger = logging.getLogger(__name__)
 
 
 class HTMLDigestFormatter(DigestFormatter):
-    def format(self, digest: Digest) -> str:
-        if not digest.contents:
+    def format(self, contents: List[Content]) -> str:
+        if not contents:
             return ""
 
         template_str = open(
             "echopages/infrastructure/templates/digest_template.html"
         ).read()
         template = Template(template_str)
-        return template.render(digest=digest)
+        return template.render(contents=contents)
 
 
 # class PostmarkDigestDeliverySystem(DigestDeliverySystem):

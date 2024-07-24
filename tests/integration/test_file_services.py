@@ -1,5 +1,5 @@
 from echopages.application import services
-from echopages.infrastructure.database.sql import get_unit_of_work
+from echopages.bootstrap import get_unit_of_work
 from echopages.infrastructure.delivery import samplers
 from echopages.infrastructure.delivery.delivery_system import (
     DiskDigestDeliverySystem,
@@ -7,8 +7,8 @@ from echopages.infrastructure.delivery.delivery_system import (
 )
 
 
-def test_trigger_digest(dummy_db_uri) -> None:
-    uow = get_unit_of_work(dummy_db_uri)
+def test_trigger_digest() -> None:
+    uow = get_unit_of_work()
     digest_formatter = HTMLDigestFormatter()
     delivery_system = DiskDigestDeliverySystem("./digests")
 
@@ -28,7 +28,7 @@ def test_trigger_digest(dummy_db_uri) -> None:
 
     # When: A digest with 3 contents is triggered
     n_samples = 3
-    digest = services.delivery_service(
+    services.delivery_service(
         uow,
         content_sampler,
         n_samples,

@@ -85,7 +85,9 @@ def test_generate_digest() -> None:
     digests = uow.digest_repo.get_all()
     assert len(digests) == 1
     assert digest_id == digests[0].id
-    assert digests[0].contents == content_objects[:2]
+    assert digests[0].content_ids == [
+        content.id for content in content_objects[:number_of_units]
+    ]
     assert digests[0].sent is False
 
 
@@ -95,7 +97,8 @@ def test_deliver_digest() -> None:
     content_objects = setup_contents(uow, contents)
 
     delivery_system = FakeDigestDeliverySystem()
-    digest = model.Digest(id=1, contents=content_objects)
+
+    digest = model.Digest(id=1, content_ids=[content.id for content in content_objects])  # type: ignore
     digest.contents_str = "content unit 1,content unit 2,content unit 3"
     uow.digest_repo.add(digest)
 
@@ -110,7 +113,8 @@ def test_deliver_digest() -> None:
 def test_format_digest() -> None:
     uow = FakeUnitOfWork()
     digest_formatter = FakeDigestFormatter()
-    digest = model.Digest(id=1, contents=[model.Content(id=1, text="content unit 1")])
+    uow.content_repo.add(model.Content(id=1, text="content unit 1"))
+    digest = model.Digest(id=1, content_ids=[1])
     uow.digest_repo.add(digest)
 
     services.format_digest(uow, digest_formatter, 1)
@@ -133,7 +137,7 @@ def test_trigger_digest() -> None:
 
     # When: A digest with 3 contents is triggered
     n_samples = 3
-    digest = services.delivery_service(
+    services.delivery_service(
         uow,
         content_sampler,
         n_samples,

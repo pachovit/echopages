@@ -12,13 +12,14 @@ class Digest:
     def __init__(
         self,
         id: Optional[int] = None,
-        contents: Optional[List[Content]] = [],
-        sent: Optional[bool] = False,
+        content_ids: List[int] = [],
+        sent: bool = False,
+        contents_str: str = "",
     ) -> None:
         self.id = id
-        self.contents = contents
+        self.content_ids = content_ids
         self.sent = sent
-        self.contents_str: str = ""
+        self.contents_str = contents_str
 
     def mark_as_sent(self) -> None:
         self.sent = True
@@ -35,7 +36,7 @@ class ContentSampler(abc.ABC):
 
 class DigestFormatter(abc.ABC):
     @abc.abstractmethod
-    def format(self, digest: Digest) -> str:
+    def format(self, contents: List[Content]) -> str:
         raise NotImplementedError
 
 
