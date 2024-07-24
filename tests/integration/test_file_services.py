@@ -2,15 +2,15 @@ from echopages.application import services
 from echopages.bootstrap import get_unit_of_work
 from echopages.infrastructure.delivery import samplers
 from echopages.infrastructure.delivery.delivery_system import (
-    DiskDigestDeliverySystem,
     HTMLDigestFormatter,
 )
+from echopages.infrastructure.fakes import FakeDigestDeliverySystem
 
 
 def test_trigger_digest() -> None:
     uow = get_unit_of_work()
     digest_formatter = HTMLDigestFormatter()
-    delivery_system = DiskDigestDeliverySystem("./digests")
+    delivery_system = FakeDigestDeliverySystem()
 
     content_sampler = samplers.SimpleContentSampler()
     samplers.CountIndex.value = 0
