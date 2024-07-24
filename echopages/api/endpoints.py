@@ -7,8 +7,7 @@ import echopages.config
 from echopages import bootstrap
 from echopages.application import services
 from echopages.domain import model, repositories
-from echopages.infrastructure.delivery import samplers, schedulers
-from echopages.infrastructure.delivery.delivery_system import HTMLDigestFormatter
+from echopages.infrastructure.delivery import schedulers
 
 app = FastAPI()
 
@@ -69,8 +68,8 @@ async def trigger_digest(
         bootstrap.get_digest_delivery_system
     ),
 ) -> TriggerDigestResponse:
-    content_sampler = samplers.SimpleContentSampler()
-    digest_formatter = HTMLDigestFormatter()
+    content_sampler = bootstrap.get_sampler()
+    digest_formatter = bootstrap.get_digest_formatter()
 
     digest_str = services.delivery_service(
         uow,
@@ -102,7 +101,7 @@ async def configure_schedule(
     schedule: Schedule,
     uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> ConfigureScheduleResponse:
-    content_sampler = samplers.SimpleContentSampler()
+    content_sampler = bootstrap.get_sampler()
 
     scheduler = schedulers.SimpleScheduler(
         lambda: services.generate_digest(

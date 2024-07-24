@@ -1,18 +1,19 @@
 from echopages.application import services
-from echopages.bootstrap import get_unit_of_work
-from echopages.infrastructure.delivery import samplers
-from echopages.infrastructure.delivery.delivery_system import (
-    HTMLDigestFormatter,
+from echopages.bootstrap import (
+    get_digest_delivery_system,
+    get_digest_formatter,
+    get_sampler,
+    get_unit_of_work,
 )
-from echopages.infrastructure.fakes import FakeDigestDeliverySystem
+from echopages.infrastructure.delivery import samplers
 
 
 def test_trigger_digest() -> None:
     uow = get_unit_of_work()
-    digest_formatter = HTMLDigestFormatter()
-    delivery_system = FakeDigestDeliverySystem()
+    digest_formatter = get_digest_formatter()
+    delivery_system = get_digest_delivery_system()
 
-    content_sampler = samplers.SimpleContentSampler()
+    content_sampler = get_sampler()
     samplers.CountIndex.value = 0
 
     with uow:
