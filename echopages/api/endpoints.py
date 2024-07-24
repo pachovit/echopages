@@ -7,7 +7,6 @@ import echopages.config
 from echopages import bootstrap
 from echopages.application import services
 from echopages.domain import model, repositories
-from echopages.infrastructure.database import sql
 from echopages.infrastructure.delivery import samplers, schedulers
 from echopages.infrastructure.delivery.delivery_system import HTMLDigestFormatter
 
@@ -33,7 +32,7 @@ class GetContentResponse(BaseModel):
 )
 async def add_content(
     content: Content,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> AddContentResponse:
     # Simulate adding content
     content_id = services.add_content(uow, content.text)
@@ -43,7 +42,7 @@ async def add_content(
 @app.get("/contents/{content_id}", response_model=GetContentResponse)
 async def get_content(
     content_id: int,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> GetContentResponse:
     content_str = services.get_content_by_id(uow, content_id)
 
@@ -65,7 +64,7 @@ class TriggerDigestResponse(BaseModel):
 @app.post("/trigger_digest")
 async def trigger_digest(
     trigger_digest_request: TriggerDigest,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
     digest_delivery_system: model.DigestDeliverySystem = Depends(
         bootstrap.get_digest_delivery_system
     ),
@@ -101,7 +100,7 @@ class ConfigureScheduleResponse(BaseModel):
 @app.post("/configure_schedule")
 async def configure_schedule(
     schedule: Schedule,
-    uow: repositories.UnitOfWork = Depends(sql.get_unit_of_work),
+    uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> ConfigureScheduleResponse:
     content_sampler = samplers.SimpleContentSampler()
 

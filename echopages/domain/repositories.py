@@ -42,15 +42,10 @@ class UnitOfWork(abc.ABC):
     content_repo: ContentRepository
     digest_repo: DigestRepository
 
-    def __init__(self):
-        self.entered = False
-
     def __enter__(self) -> UnitOfWork:
-        self.entered = True
         return self
 
     def __exit__(self, *args) -> None:  # type: ignore
-        self.entered = False
         self.rollback()
 
     def commit(self) -> None:

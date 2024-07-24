@@ -47,7 +47,9 @@ def generate_digest(
 ) -> int:
     contents = sample_contents(uow, content_sampler, number_of_units)
 
-    digest = model.Digest(contents=contents)
+    content_ids = [c.id for c in contents]
+
+    digest = model.Digest(content_ids=content_ids)  # type: ignore
     with uow:
         digest_id = uow.digest_repo.add(digest)
         uow.commit()
@@ -62,6 +64,7 @@ def deliver_digest(
 ) -> None:
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
+        assert digest is not None
         digest_delivery_system.deliver_digest(digest.contents_str)
         digest.mark_as_sent()
         uow.digest_repo.update(digest)
@@ -75,7 +78,15 @@ def format_digest(
 ) -> str:
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
-        digest_str = digest_formatter.format(digest)
+        assert digest is not None
+
+        contents = []
+        for content_id in digest.content_ids:
+            content = uow.content_repo.get_by_id(content_id)
+            assert content is not None
+            contents.append(content)
+
+        digest_str = digest_formatter.format(contents)
         digest.store_content_str(digest_str)
         uow.digest_repo.update(digest)
         uow.commit()

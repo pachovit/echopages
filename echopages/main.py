@@ -6,7 +6,6 @@ import echopages.bootstrap as bootstrap
 import echopages.config
 from echopages.api import endpoints
 from echopages.application import services
-from echopages.infrastructure.database import sql
 from echopages.infrastructure.delivery import samplers, schedulers
 from echopages.infrastructure.delivery.delivery_system import HTMLDigestFormatter
 
@@ -15,8 +14,7 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    content_repo = sql.get_content_repo(echopages.config.DB_URI)
-    digest_repo = sql.get_digest_repo(echopages.config.DB_URI)
+    uow = bootstrap.get_unit_of_work()
     digest_formatter = HTMLDigestFormatter()
     digest_delivery_system = bootstrap.get_digest_delivery_system()
     content_sampler = samplers.SimpleContentSampler()
@@ -24,8 +22,7 @@ if __name__ == "__main__":
     # Configure Scheduler
     scheduler = schedulers.SimpleScheduler(
         lambda: services.delivery_service(
-            content_repo,
-            digest_repo,
+            uow,
             content_sampler,
             echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
             digest_formatter,
