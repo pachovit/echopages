@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 from echopages.application import services
 from echopages.domain import model
 from echopages.infrastructure.delivery import samplers, schedulers
-from echopages.infrastructure.fakes import (
+from tests.fakes import (
     FakeDigestDeliverySystem,
     FakeDigestFormatter,
     FakeUnitOfWork,
