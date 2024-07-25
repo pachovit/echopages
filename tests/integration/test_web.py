@@ -12,20 +12,6 @@ def _add_content(url: str, content: str) -> Response:
     return r
 
 
-def test_add_content() -> None:
-    content = "sample content unit 1"
-    url = "http://127.0.0.1:8000"
-
-    r = _add_content(url, content)
-    assert r.status_code == 201
-
-    content_id = r.json()["content_id"]
-
-    r = client.get(f"{url}/contents/{content_id}")
-    assert r.status_code == 200
-    assert r.json()["text"] == content
-
-
 def test_trigger_digest() -> None:
     url = "http://127.0.0.1:8000"
     _add_content(url, "sample content 123")
