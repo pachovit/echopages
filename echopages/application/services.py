@@ -1,14 +1,14 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from echopages.domain import model, repositories
 
 
 def add_content(
     uow: repositories.UnitOfWork,
-    content: str,
+    content_data: Dict[str, str],
 ) -> int:
     with uow:
-        content_id = uow.content_repo.add(model.Content(text=content))
+        content_id = uow.content_repo.add(model.Content(id=None, **content_data))
         uow.commit()
     return content_id
 
@@ -16,14 +16,14 @@ def add_content(
 def get_content_by_id(
     uow: repositories.UnitOfWork,
     content_id: int,
-) -> Optional[str]:
+) -> Optional[Dict[str, Any]]:
     with uow:
         content = uow.content_repo.get_by_id(content_id)
 
         if content is None:
             return None
-        content_str = content.text
-    return content_str
+        content_data = content.__dict__
+    return content_data
 
 
 def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
