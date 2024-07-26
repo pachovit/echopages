@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import Depends, FastAPI, status
+from fastapi import Depends, FastAPI, HTTPException, status
 from pydantic import BaseModel, field_validator
 
 import echopages.config
@@ -13,10 +13,10 @@ app = FastAPI()
 
 
 class AddContentRequest(BaseModel):
-    source: str
-    author: str
-    location: str
-    text: str
+    source: str = ""
+    author: str = ""
+    location: str = ""
+    text: str = ""
 
 
 class AddContentResponse(BaseModel):
@@ -39,7 +39,9 @@ async def add_content(
     content: AddContentRequest,
     uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> AddContentResponse:
-    # Simulate adding content
+    if not content.text:
+        raise HTTPException(status_code=400, detail="Text is required")
+
     content_id = services.add_content(uow, content.__dict__)
     return AddContentResponse(content_id=content_id)
 
@@ -52,9 +54,7 @@ async def get_content(
     content_data = services.get_content_by_id(uow, content_id)
 
     if content_data is None:
-        return GetContentResponse(
-            text="Content Not Found", source="", author="", location=""
-        )
+        raise HTTPException(status_code=404, detail="Content Not Found")
     else:
         return GetContentResponse(**content_data)
 

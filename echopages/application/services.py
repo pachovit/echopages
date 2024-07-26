@@ -8,7 +8,8 @@ def add_content(
     content_data: Dict[str, str],
 ) -> int:
     with uow:
-        content_id = uow.content_repo.add(model.Content(id=None, **content_data))
+        content = model.Content(id=None, **content_data)
+        content_id = uow.content_repo.add(content)
         uow.commit()
     return content_id
 
