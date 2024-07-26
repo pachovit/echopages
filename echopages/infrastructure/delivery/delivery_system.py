@@ -3,6 +3,7 @@ import os
 import uuid
 from typing import List
 
+import markdown
 from jinja2 import Template
 from postmarker.core import PostmarkClient
 
@@ -20,7 +21,18 @@ class HTMLDigestFormatter(DigestFormatter):
             "echopages/infrastructure/templates/digest_template.html"
         ).read()
         template = Template(template_str)
-        return template.render(contents=contents)
+
+        contents_to_render = [
+            {
+                "source": content.source,
+                "author": content.author,
+                "location": content.location,
+                "html_text": markdown.markdown(content.text),
+            }
+            for content in contents
+        ]
+
+        return template.render(contents=contents_to_render)
 
 
 class PostmarkDigestDeliverySystem(DigestDeliverySystem):
