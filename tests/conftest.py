@@ -1,7 +1,7 @@
 import os
 import shutil
 from typing import Generator
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -27,8 +27,3 @@ def fake_delivery_system() -> Generator[None, None, None]:
         yield
     if os.path.exists(TEST_DIGESTS_DIR):
         shutil.rmtree(TEST_DIGESTS_DIR)
-
-
-@pytest.fixture(scope="function")
-def context() -> Generator[Mock, None, None]:
-    yield Mock()
