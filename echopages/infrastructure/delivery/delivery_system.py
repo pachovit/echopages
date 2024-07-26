@@ -1,6 +1,7 @@
 import logging
 import os
 import uuid
+from datetime import datetime
 from typing import List
 
 import markdown
@@ -31,8 +32,15 @@ class HTMLDigestFormatter(DigestFormatter):
             }
             for content in contents
         ]
+        now = datetime.now()
+        current_date = now.strftime("%B %d, %Y")  # Format: Month Day, Year
+        current_year = now.year
 
-        return template.render(contents=contents_to_render)
+        return template.render(
+            contents=contents_to_render,
+            current_date=current_date,
+            current_year=current_year,
+        )
 
 
 class PostmarkDigestDeliverySystem(DigestDeliverySystem):
@@ -43,14 +51,14 @@ class PostmarkDigestDeliverySystem(DigestDeliverySystem):
         """Sends an email to the specified recipient with the provided digest
         content."""
 
-        app_email_address = os.getenv("APP_EMAIL_ADDRESS")
-        api_token = os.getenv("POSTMARK_SERVER_API_TOKEN")
+        app_email_address = os.getenv("APP_EMAIL_ADDRESS", "")
+        api_token = os.getenv("POSTMARK_SERVER_API_TOKEN", "")
 
         pm = PostmarkClient(server_token=api_token)
         pm.emails.send(
-            From=app_email_address,
+            From=f"EchoPages <{app_email_address}>",
             To=self.recipient_email,
-            Subject="EchoPages Digest",
+            Subject="Daily Digest",
             HtmlBody=digest_str,
         )
 

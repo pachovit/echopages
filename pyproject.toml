@@ -24,6 +24,7 @@ time-machine = "^2.14.2"
 requests = "^2.32.3"
 mypy = "^1.10.1"
 pytest-bdd = "^7.2.0"
+types-markdown = "^3.6.0.20240316"
 
 [build-system]
 requires = ["poetry-core"]
