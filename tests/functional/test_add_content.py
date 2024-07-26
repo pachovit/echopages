@@ -3,7 +3,7 @@ from typing import Dict
 from fastapi.testclient import TestClient
 from pytest_bdd import given, parsers, scenario, then, when
 
-from echopages.api.endpoints import app  # Import your FastAPI app
+from echopages.api.endpoints import app
 
 client = TestClient(app)
 
@@ -43,5 +43,5 @@ def step_and_content_should_be_retrievable(
 ) -> None:
     response = client.get(f"/contents/{content_id}")
     assert response.status_code == 200
-    gotten_text = response.json()["text"]
-    assert gotten_text == content_metadata["text"]
+    for key, value in content_metadata.items():
+        assert response.json()[key] == value

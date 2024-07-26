@@ -1,3 +1,5 @@
+from typing import Dict
+
 from echopages.application import services
 from echopages.bootstrap import (
     get_digest_delivery_system,
@@ -6,6 +8,15 @@ from echopages.bootstrap import (
     get_unit_of_work,
 )
 from echopages.infrastructure.delivery import samplers
+
+
+def sample_content_data(id: int) -> Dict[str, str]:
+    return {
+        "source": f"source {id}",
+        "author": f"author {id}",
+        "location": f"location {id}",
+        "text": f"text {id}",
+    }
 
 
 def test_trigger_digest() -> None:
@@ -21,7 +32,7 @@ def test_trigger_digest() -> None:
         assert len(uow.content_repo.get_all()) == 0
 
     # Given: 3 contents
-    contents = ["content unit 1", "content unit 2", "content unit 3"]
+    contents = [sample_content_data(1), sample_content_data(2), sample_content_data(3)]
     for content in contents:
         services.add_content(uow, content)
     with uow:
@@ -41,5 +52,8 @@ def test_trigger_digest() -> None:
     with uow:
         digest = uow.digest_repo.get_all()[0]
         for content in contents:
-            assert content in digest.contents_str
+            assert content["source"] in digest.contents_str
+            assert content["author"] in digest.contents_str
+            assert content["location"] in digest.contents_str
+            assert content["text"] in digest.contents_str
         assert digest.sent

@@ -12,7 +12,10 @@ from echopages.infrastructure.delivery import schedulers
 app = FastAPI()
 
 
-class Content(BaseModel):
+class AddContentRequest(BaseModel):
+    source: str
+    author: str
+    location: str
     text: str
 
 
@@ -21,6 +24,9 @@ class AddContentResponse(BaseModel):
 
 
 class GetContentResponse(BaseModel):
+    source: str
+    author: str
+    location: str
     text: str
 
 
@@ -30,11 +36,11 @@ class GetContentResponse(BaseModel):
     response_model=AddContentResponse,
 )
 async def add_content(
-    content: Content,
+    content: AddContentRequest,
     uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> AddContentResponse:
     # Simulate adding content
-    content_id = services.add_content(uow, content.text)
+    content_id = services.add_content(uow, content.__dict__)
     return AddContentResponse(content_id=content_id)
 
 
@@ -43,13 +49,14 @@ async def get_content(
     content_id: int,
     uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> GetContentResponse:
-    content_str = services.get_content_by_id(uow, content_id)
+    content_data = services.get_content_by_id(uow, content_id)
 
-    if content_str is None:
-        text = "Content Not Found"
+    if content_data is None:
+        return GetContentResponse(
+            text="Content Not Found", source="", author="", location=""
+        )
     else:
-        text = content_str
-    return GetContentResponse(text=text)
+        return GetContentResponse(**content_data)
 
 
 class TriggerDigest(BaseModel):

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from time import sleep
-from typing import List
+from typing import Dict, List
 
 from time_machine import travel
 from zoneinfo import ZoneInfo
@@ -15,14 +15,29 @@ from tests.fakes import (
 )
 
 
+def sample_content_data(id: int) -> Dict[str, str]:
+    return {
+        "source": f"source {id}",
+        "author": f"author {id}",
+        "location": f"location {id}",
+        "text": f"text {id}",
+    }
+
+
 def setup_contents(
     uow: FakeUnitOfWork,
-    contents: List[str],
+    content_datas: List[Dict[str, str]],
 ) -> List[model.Content]:
     content_objects = []
 
-    for n_, content in enumerate(contents):
-        content_object = model.Content(id=n_, text=content)
+    for n_, content_data in enumerate(content_datas):
+        content_object = model.Content(
+            id=n_,
+            source=content_data["source"],
+            author=content_data["author"],
+            location=content_data["location"],
+            text=content_data["text"],
+        )
         uow.content_repo.add(content_object)
 
         content_objects.append(content_object)
@@ -33,27 +48,41 @@ def setup_contents(
 def test_user_can_add_contents() -> None:
     # Given: Some content units
     uow = FakeUnitOfWork()
-    _ = setup_contents(uow, ["content unit 1", "content unit 2"])
+    content_data_1 = sample_content_data(1)
+    content_data_2 = sample_content_data(2)
+    content_data_3 = sample_content_data(3)
+    _ = setup_contents(uow, [content_data_1, content_data_2])
 
     # When: User adds content units
-    services.add_content(uow, "content unit 3")
+    services.add_content(uow, content_data_3)
 
     # Then: Content units are added
     available_content = uow.content_repo.get_all()
     assert len(available_content) == 3
-    assert {"content unit 1", "content unit 2", "content unit 3"} == set(
+    assert {f"source {id}" for id in range(1, 4)} == set(
+        content.source for content in available_content
+    )
+    assert {f"author {id}" for id in range(1, 4)} == set(
+        content.author for content in available_content
+    )
+    assert {f"location {id}" for id in range(1, 4)} == set(
+        content.location for content in available_content
+    )
+    assert {f"text {id}" for id in range(1, 4)} == set(
         content.text for content in available_content
     )
 
 
 def test_user_can_get_contents() -> None:
     uow = FakeUnitOfWork()
-    content_id = services.add_content(uow, "content unit 3")
+    content_data = sample_content_data(3)
+    content_id = services.add_content(uow, content_data)
 
-    content_str = services.get_content_by_id(uow, content_id)
+    saved_content = services.get_content_by_id(uow, content_id)
 
-    assert content_str is not None
-    assert content_str == "content unit 3"
+    assert saved_content is not None
+    saved_content.pop("id")
+    assert saved_content == content_data
 
 
 def test_configure_schedule() -> None:
@@ -70,7 +99,7 @@ def test_configure_schedule() -> None:
 
 def test_generate_digest() -> None:
     uow = FakeUnitOfWork()
-    contents = ["content unit 1", "content unit 2", "content unit 3"]
+    contents = [sample_content_data(1), sample_content_data(2), sample_content_data(3)]
     content_objects = setup_contents(uow, contents)
 
     content_sampler = samplers.SimpleContentSampler()
@@ -93,7 +122,7 @@ def test_generate_digest() -> None:
 
 def test_deliver_digest() -> None:
     uow = FakeUnitOfWork()
-    contents = ["content unit 1", "content unit 2", "content unit 3"]
+    contents = [sample_content_data(1), sample_content_data(2), sample_content_data(3)]
     content_objects = setup_contents(uow, contents)
 
     delivery_system = FakeDigestDeliverySystem()
@@ -113,13 +142,24 @@ def test_deliver_digest() -> None:
 def test_format_digest() -> None:
     uow = FakeUnitOfWork()
     digest_formatter = FakeDigestFormatter()
-    uow.content_repo.add(model.Content(id=1, text="content unit 1"))
+    uow.content_repo.add(
+        model.Content(
+            id=1,
+            source="source 1",
+            author="author 1",
+            location="location 1",
+            text="content unit 1",
+        )
+    )
     digest = model.Digest(id=1, content_ids=[1])
     uow.digest_repo.add(digest)
 
     services.format_digest(uow, digest_formatter, 1)
 
-    assert digest.contents_str == "content unit 1"
+    assert (
+        digest.contents_str
+        == "{'id': 1, 'text': 'content unit 1', 'source': 'source 1', 'author': 'author 1', 'location': 'location 1'}"
+    )
 
 
 def test_trigger_digest() -> None:
@@ -131,7 +171,7 @@ def test_trigger_digest() -> None:
     samplers.CountIndex.value = 0
 
     # Given: 3 contents
-    contents = ["content unit 1", "content unit 2", "content unit 3"]
+    contents = [sample_content_data(1), sample_content_data(2), sample_content_data(3)]
     for content in contents:
         services.add_content(uow, content)
 
@@ -148,7 +188,10 @@ def test_trigger_digest() -> None:
     # Then: A digest with 3 contents is generated and stored
     digest = uow.digest_repo.get_all()[0]
     for content in contents:
-        assert content in digest.contents_str
+        assert content["source"] in digest.contents_str
+        assert content["author"] in digest.contents_str
+        assert content["location"] in digest.contents_str
+        assert content["text"] in digest.contents_str
     assert digest.sent
 
 
@@ -160,8 +203,8 @@ def test_all_flow() -> None:
     samplers.CountIndex.value = 0
 
     # Populate contents
-    services.add_content(uow, "content unit 1")
-    services.add_content(uow, "content unit 2")
+    services.add_content(uow, sample_content_data(1))
+    services.add_content(uow, sample_content_data(2))
 
     assert len(uow.digest_repo.get_all()) == 0
 
@@ -193,8 +236,8 @@ def test_all_flow() -> None:
         assert len(uow.digest_repo.get_all()) == 4
         assert len(delivery_system.sent_contents) == 4
         assert delivery_system.sent_contents == [
-            "content unit 1",
-            "content unit 2",
-            "content unit 1",
-            "content unit 2",
+            "{'id': 1, 'text': 'text 1', 'source': 'source 1', 'author': 'author 1', 'location': 'location 1'}",
+            "{'id': 2, 'text': 'text 2', 'source': 'source 2', 'author': 'author 2', 'location': 'location 2'}",
+            "{'id': 1, 'text': 'text 1', 'source': 'source 1', 'author': 'author 1', 'location': 'location 1'}",
+            "{'id': 2, 'text': 'text 2', 'source': 'source 2', 'author': 'author 2', 'location': 'location 2'}",
         ]

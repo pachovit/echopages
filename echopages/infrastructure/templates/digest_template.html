@@ -40,8 +40,8 @@
     <h1>Digest</h1>
     {% for content in contents %}
     <div class="highlight">
-        <div class="source">Source</div>
-        <div class="metadata">Metadata</div>
+        <div class="source">{{ content.source }} - {{ content.author }}</div>
+        <div class="metadata">{{ content.location }}</div>
         <div class="text">{{ content.text }}</div>
     </div>
     {% endfor %}

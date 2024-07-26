@@ -3,9 +3,19 @@ from typing import Callable, List, Optional
 
 
 class Content:
-    def __init__(self, id: Optional[int] = None, text: str = "") -> None:
+    def __init__(
+        self,
+        id: Optional[int] = None,
+        source: str = "",
+        author: str = "",
+        location: str = "",
+        text: str = "",
+    ) -> None:
         self.id = id
         self.text = text
+        self.source = source
+        self.author = author
+        self.location = location
 
 
 class Digest:
