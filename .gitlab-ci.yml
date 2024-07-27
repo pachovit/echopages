@@ -14,6 +14,12 @@ test:
     - poetry config virtualenvs.create false && poetry install
   script:
     - PYTHONPATH=. pytest --cov=echopages -s tests
+  rules:
+    - changes:
+      - "**/*.py"
+      - "pyproject.toml"
+      - "tests/**"
+      - "features/**"
 
 build:
   stage: build
@@ -30,6 +36,13 @@ build:
     - docker push pachovit/echopages:latest
   only:
     - main
+  rules:
+    - changes:
+      - "**/*.py"
+      - "pyproject.toml"
+      - "tests/**"
+      - "features/**"
+      - "Dockerfile"
 
 deploy:
   stage: deploy
@@ -58,3 +71,12 @@ deploy:
       "
   only:
     - main
+  rules:
+    - changes:
+      - "**/*.py"
+      - "pyproject.toml"
+      - "tests/**"
+      - "features/**"
+      - "Dockerfile"
+      - "docker-compose.yml"
+      - "production.env"
