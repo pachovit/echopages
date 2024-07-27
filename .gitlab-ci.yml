@@ -1,0 +1,47 @@
+stages:
+  - test
+  # - build
+  # - deploy
+
+test:
+  image: python:3.9-slim
+  stage: test
+  before_script:
+    - |
+      apt-get update && apt-get install -y curl && \
+      curl -sSL https://install.python-poetry.org | python3 - && \
+      ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+    - poetry config virtualenvs.create false && poetry install
+    - PYTHONPATH=. pytest --cov=echopages -s tests
+
+# image: docker:latest
+
+# services:
+#   - docker:dind
+
+# variables:
+#   DOCKER_DRIVER: overlay2
+
+# before_script:
+#   - docker info
+#   - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+
+# build:
+#   stage: build
+#   script:
+#     - docker build -t $CI_REGISTRY_IMAGE:latest .
+#     - docker push $CI_REGISTRY_IMAGE:latest
+
+# deploy:
+#   stage: deploy
+#   environment:
+#     name: production
+#   script:
+#     - apk add --no-cache openssh-client
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
+#     - ssh $DEPLOY_USER@$DEPLOY_SERVER 'cd /path/to/your/app && git pull && docker-compose down && docker-compose up -d --build'
+#   only:
+#     - main
