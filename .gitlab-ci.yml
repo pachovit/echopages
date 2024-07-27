@@ -1,7 +1,7 @@
 stages:
   - test
   - build
-  # - deploy
+  - deploy
 
 test:
   image: python:3.9-slim
@@ -26,19 +26,33 @@ build:
     - docker info
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
   script:
-    - docker build -t $CI_REGISTRY_USER/echopages:latest .
-    - docker push $CI_REGISTRY_USER/echopages:latest
+    - docker build -t pachovit/echopages:latest .
+    - docker push pachovit/echopages:latest
+  only:
+    - main
 
-# deploy:
-#   stage: deploy
-#   environment:
-#     name: production
-#   script:
-#     - apk add --no-cache openssh-client
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
-#     - ssh $DEPLOY_USER@$DEPLOY_SERVER 'cd /path/to/your/app && git pull && docker-compose down && docker-compose up -d --build'
-#   only:
-#     - main
+deploy:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  environment:
+    name: production
+  before_script:
+    - apk add --no-cache openssh-client
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
+  script:
+    - scp -o StrictHostKeyChecking=no docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:/echopages/docker-compose.yml
+    - scp -o StrictHostKeyChecking=no production.env $DEPLOY_USER@$DEPLOY_SERVER:/echopages/production.env
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
+        echo 'APP_EMAIL_ADDRESS=${APP_EMAIL_ADDRESS}' >> /echopages/production.env;
+        echo 'POSTMARK_SERVER_API_TOKEN=${POSTMARK_SERVER_API_TOKEN}' >> /echopages/production.env;
+        echo 'RECIPIENT_EMAIL=${RECIPIENT_EMAIL}' >> /echopages/production.env;
+        docker pull pachovit/echopages:latest;
+        docker-compose -f /echopages/docker-compose.yml --env-file /echopages/production.env up -d;
+      "
+  only:
+    - main

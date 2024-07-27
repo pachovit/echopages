@@ -5,6 +5,6 @@ DELIVERY_SYSTEM = os.environ.get("DELIVERY_SYSTEM", "PostmarkDigestDeliverySyste
 DISK_DELIVERY_SYSTEM_DIRECTORY = os.environ.get(
     "DISK_DELIVERY_SYSTEM_DIRECTORY", "data/digests"
 )
-RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "hello@echopages.com")
+RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "recipient@echopages.com")
 NUMBER_OF_UNITS_PER_DIGEST = int(os.environ.get("NUMBER_OF_UNITS_PER_DIGEST", 1))
 DAILY_TIME_OF_DIGEST = os.environ.get("DAILY_TIME_OF_DIGEST", "07:00")
