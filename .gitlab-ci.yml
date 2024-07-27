@@ -37,7 +37,8 @@ build:
   only:
     - main
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
       - "**/*.py"
       - "pyproject.toml"
       - "tests/**"
@@ -72,7 +73,8 @@ deploy:
   only:
     - main
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
       - "**/*.py"
       - "pyproject.toml"
       - "tests/**"
