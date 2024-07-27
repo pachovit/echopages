@@ -34,8 +34,6 @@ build:
   script:
     - docker build -t pachovit/echopages:latest .
     - docker push pachovit/echopages:latest
-  only:
-    - main
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
@@ -70,8 +68,6 @@ deploy:
         docker pull pachovit/echopages:latest;
         docker compose -f /echopages/docker-compose.yml --env-file /echopages/production.env up -d;
       "
-  only:
-    - main
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
