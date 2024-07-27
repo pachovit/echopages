@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   echopages:
-    build: .
+    image: pachovit/echopages:latest
     ports:
       - "8000:8000"
     environment:
@@ -17,5 +17,5 @@ services:
       - NUMBER_OF_UNITS_PER_DIGEST=${NUMBER_OF_UNITS_PER_DIGEST}
       - DAILY_TIME_OF_DIGEST=${DAILY_TIME_OF_DIGEST}
     volumes:
-      - ./data:/app/data
+      - /echopages/data:/app/data
     restart: always
