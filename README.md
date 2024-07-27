@@ -1,5 +1,7 @@
 # Echo Pages
 
+*Read, Repeat, Retain*
+
 EchoPages is a digest delivery system designed to provide users with scheduled summaries of their chosen content, such as book chapters or articles. Inspired by services like Readwise, EchoPages enhances the reading and learning experience by sending personalized content snippets on a predefined schedule, ensuring continuous engagement and retention.
 
 ## Features:
