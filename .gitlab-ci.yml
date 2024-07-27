@@ -1,6 +1,6 @@
 stages:
   - test
-  # - build
+  - build
   # - deploy
 
 test:
@@ -15,23 +15,19 @@ test:
   script:
     - PYTHONPATH=. pytest --cov=echopages -s tests
 
-# image: docker:latest
-
-# services:
-#   - docker:dind
-
-# variables:
-#   DOCKER_DRIVER: overlay2
-
-# before_script:
-#   - docker info
-#   - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
-
-# build:
-#   stage: build
-#   script:
-#     - docker build -t $CI_REGISTRY_IMAGE:latest .
-#     - docker push $CI_REGISTRY_IMAGE:latest
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - docker info
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build -t $CI_REGISTRY_USER/echopages:latest .
+    - docker push $CI_REGISTRY_USER/echopages:latest
 
 # deploy:
 #   stage: deploy
