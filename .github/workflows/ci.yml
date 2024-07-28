@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - cicd
-    paths:
-      - "**/*.py"
-      - "pyproject.toml"
-      - "tests/**"
-      - "features/**"
-      - "Dockerfile"
-      - "docker-compose.yml"
-      - "production.env"
+    # paths:
+    #   - "**/*.py"
+    #   - "pyproject.toml"
+    #   - "tests/**"
+    #   - "features/**"
+    #   - "Dockerfile"
+    #   - "docker-compose.yml"
+    #   - "production.env"
 
 jobs:
   test:
