@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - cicd
+      - main
     paths:
       - "**/*.py"
       - "pyproject.toml"
