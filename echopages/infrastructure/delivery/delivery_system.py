@@ -84,6 +84,7 @@ class PostmarkDigestDeliverySystem(DigestDeliverySystem):
             Subject=digest_repr.title,
             HtmlBody=digest_repr.contents_str,
         )
+        logger.info(f"Sent digest to {self.recipient_email}")
 
 
 class DiskDigestDeliverySystem(DigestDeliverySystem):
