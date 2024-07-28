@@ -20,17 +20,31 @@ class SimpleContentSampler(model.ContentSampler):
         if len(contents) == 0:
             raise ValueError("No content units available")
 
-        # TODO: Indices are not a direct match to IDs, neither for digests nor for contents.
-
         # Start sampling from the last content sent
         if len(digests) == 0:
             content_sampler_index = -1
         else:
-            last_sent_content_id = max(digests[-1].content_ids)
-            content_sampler_index = [content.id for content in contents].index(
-                last_sent_content_id
-            )
-            print()
+            # Get digest with the last content sent
+            previously_sent_digests = [
+                digest for digest in digests if digest.sent_at is not None
+            ]
+            if len(previously_sent_digests) == 0:
+                last_digest = digests[-1]
+            else:
+                digest_timestamps = [
+                    digest.sent_at
+                    for digest in previously_sent_digests
+                    if digest.sent_at is not None
+                ]
+                last_digest_index = digest_timestamps.index(max(digest_timestamps))
+                last_digest = previously_sent_digests[last_digest_index]
+
+            last_sent_content_id = max(last_digest.content_ids)
+            content_ids = [content.id for content in contents]
+            if last_sent_content_id not in content_ids:
+                content_sampler_index = -1
+            else:
+                content_sampler_index = content_ids.index(last_sent_content_id)
 
         contents_length = len(contents)
         sampled_contents = []
