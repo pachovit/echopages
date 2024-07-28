@@ -60,7 +60,9 @@ class FileDigestRepository(repositories.DigestRepository):
         with open(self.filepath, "r") as file:
             self.digests = []
             for digest_dict in json.load(file):
-                digest_dict["digest_repr"] = DigestRepr(**digest_dict["digest_repr"])
+                digest_dict["digest_repr"] = DigestRepr(
+                    **digest_dict.get("digest_repr", {})
+                )
                 self.digests.append(Digest(**digest_dict))
 
     def save(self) -> None:
