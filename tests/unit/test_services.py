@@ -116,7 +116,7 @@ def test_generate_digest() -> None:
     assert digests[0].content_ids == [
         content.id for content in content_objects[:number_of_units]
     ]
-    assert digests[0].sent is False
+    assert digests[0].sent_at is None
 
 
 def test_deliver_digest() -> None:
@@ -140,7 +140,7 @@ def test_deliver_digest() -> None:
     assert delivery_system.sent_contents == [
         ("source 1", "content unit 1,content unit 2,content unit 3")
     ]
-    assert digest.sent is True
+    assert digest.sent_at is not None
 
 
 def test_format_digest_1_content() -> None:
@@ -222,7 +222,7 @@ def test_trigger_digest() -> None:
         assert content["location"] in digest_content_str
         assert content["text"] in digest_content_str
     digest = uow.digest_repo.get_all()[0]
-    assert digest.sent
+    assert digest.sent_at is not None
 
 
 def test_all_flow() -> None:

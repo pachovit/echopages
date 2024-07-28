@@ -54,4 +54,4 @@ def test_trigger_digest() -> None:
             assert content["author"] in digest_content_str
             assert content["location"] in digest_content_str
             assert content["text"] in digest_content_str
-        assert digest.sent
+        assert digest.sent_at is not None

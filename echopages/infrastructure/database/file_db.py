@@ -58,11 +58,13 @@ class FileDigestRepository(repositories.DigestRepository):
 
     def _load(self) -> None:
         with open(self.filepath, "r") as file:
-            self.digests = [Digest(**digest_dict) for digest_dict in json.load(file)]
+            self.digests = [
+                Digest.from_dict(digest_dict) for digest_dict in json.load(file)
+            ]
 
     def save(self) -> None:
         with open(self.filepath, "w") as file:
-            json.dump([digest.__dict__ for digest in self.digests], file, indent=2)
+            json.dump([digest.to_dict() for digest in self.digests], file, indent=2)
 
     def get_by_id(self, digest_id: int) -> Optional[Digest]:
         self._load()
@@ -78,7 +80,7 @@ class FileDigestRepository(repositories.DigestRepository):
     def add(self, digest: Digest) -> int:
         self._load()
         digest.id = (
-            max([digest.__dict__.get("id", 0) for digest in self.digests], default=0)
+            max([digest.to_dict().get("id", 0) for digest in self.digests], default=0)
             + 1
         )
         self.digests.append(digest)

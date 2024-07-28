@@ -1,6 +1,7 @@
 import abc
 from dataclasses import dataclass
-from typing import Callable, List, NewType, Optional
+from datetime import datetime
+from typing import Any, Callable, Dict, List, NewType, Optional
 
 
 class Content:
@@ -34,14 +35,28 @@ class Digest:
         self,
         id: Optional[int] = None,
         content_ids: List[int] = [],
-        sent: bool = False,
+        sent_at: Optional[datetime] = None,
     ) -> None:
         self.id = id
         self.content_ids = content_ids
-        self.sent = sent
+        self.sent_at = sent_at
 
     def mark_as_sent(self) -> None:
-        self.sent = True
+        self.sent_at = datetime.now()
+
+    def to_dict(self) -> Dict[str, Any]:
+        sent_at = self.sent_at.isoformat() if self.sent_at else None
+        return {"id": self.id, "content_ids": self.content_ids, "sent_at": sent_at}
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Digest":
+        return cls(
+            id=data["id"],
+            content_ids=data["content_ids"],
+            sent_at=datetime.fromisoformat(data["sent_at"])
+            if data["sent_at"]
+            else None,
+        )
 
 
 class ContentSampler(abc.ABC):
