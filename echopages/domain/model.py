@@ -40,7 +40,9 @@ class Digest:
 
 class ContentSampler(abc.ABC):
     @abc.abstractmethod
-    def sample(self, contents: List[Content], number_of_units: int) -> List[Content]:
+    def sample(
+        self, digests: List[Digest], contents: List[Content], number_of_units: int
+    ) -> List[Content]:
         raise NotImplementedError
 
 

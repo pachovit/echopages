@@ -38,7 +38,8 @@ def sample_contents(
 ) -> List[model.Content]:
     with uow:
         contents = uow.content_repo.get_all()
-    return content_sampler.sample(contents, number_of_units)
+        digests = uow.digest_repo.get_all()
+    return content_sampler.sample(digests, contents, number_of_units)
 
 
 def generate_digest(

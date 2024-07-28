@@ -7,7 +7,6 @@ from echopages.bootstrap import (
     get_sampler,
     get_unit_of_work,
 )
-from echopages.infrastructure.delivery import samplers
 
 
 def sample_content_data(id: int) -> Dict[str, str]:
@@ -25,7 +24,6 @@ def test_trigger_digest() -> None:
     delivery_system = get_digest_delivery_system()
 
     content_sampler = get_sampler()
-    samplers.CountIndex.value = 0
 
     with uow:
         assert len(uow.digest_repo.get_all()) == 0

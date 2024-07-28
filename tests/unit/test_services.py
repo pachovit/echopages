@@ -103,7 +103,6 @@ def test_generate_digest() -> None:
     content_objects = setup_contents(uow, contents)
 
     content_sampler = samplers.SimpleContentSampler()
-    samplers.CountIndex.value = 0
 
     number_of_units = 2
 
@@ -168,7 +167,6 @@ def test_trigger_digest() -> None:
     delivery_system = FakeDigestDeliverySystem()
 
     content_sampler = samplers.SimpleContentSampler()
-    samplers.CountIndex.value = 0
 
     # Given: 3 contents
     contents = [sample_content_data(1), sample_content_data(2), sample_content_data(3)]
@@ -200,7 +198,6 @@ def test_all_flow() -> None:
     digest_formatter = FakeDigestFormatter()
     delivery_system = FakeDigestDeliverySystem()
     content_sampler = samplers.SimpleContentSampler()
-    samplers.CountIndex.value = 0
 
     # Populate contents
     services.add_content(uow, sample_content_data(1))
