@@ -38,7 +38,7 @@ def test_trigger_digest() -> None:
 
     # When: A digest with 3 contents is triggered
     n_samples = 3
-    services.delivery_service(
+    _, digest_content_str = services.delivery_service(
         uow,
         content_sampler,
         n_samples,
@@ -50,8 +50,8 @@ def test_trigger_digest() -> None:
     with uow:
         digest = uow.digest_repo.get_all()[0]
         for content in contents:
-            assert content["source"] in digest.digest_repr.contents_str
-            assert content["author"] in digest.digest_repr.contents_str
-            assert content["location"] in digest.digest_repr.contents_str
-            assert content["text"] in digest.digest_repr.contents_str
+            assert content["source"] in digest_content_str
+            assert content["author"] in digest_content_str
+            assert content["location"] in digest_content_str
+            assert content["text"] in digest_content_str
         assert digest.sent

@@ -63,12 +63,13 @@ def deliver_digest(
     digest_delivery_system: model.DigestDeliverySystem,
     uow: repositories.UnitOfWork,
     digest_id: int,
+    digest_repr: model.DigestRepr,
 ) -> None:
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
         assert digest is not None
 
-        digest_delivery_system.deliver_digest(digest.digest_repr)
+        digest_delivery_system.deliver_digest(digest_repr)
         digest.mark_as_sent()
         uow.digest_repo.update(digest)
         uow.commit()
@@ -90,11 +91,8 @@ def format_digest(
             contents.append(content)
 
         digest_repr = digest_formatter.format(contents)
-        digest.store_repr(digest_repr)
-        uow.digest_repo.update(digest)
-        uow.commit()
 
-        return digest_repr.title, digest_repr.contents_str
+    return digest_repr.title, digest_repr.contents_str
 
 
 def delivery_service(
@@ -110,6 +108,11 @@ def delivery_service(
         digest_title, digest_content_str = format_digest(
             uow, digest_formatter, digest_id
         )
-        deliver_digest(digest_delivery_system, uow, digest_id)
+        deliver_digest(
+            digest_delivery_system,
+            uow,
+            digest_id,
+            model.DigestRepr(digest_title, digest_content_str),
+        )
 
     return digest_title, digest_content_str

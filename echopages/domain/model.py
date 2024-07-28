@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, NewType, Optional
+from typing import Callable, List, NewType, Optional
 
 
 class Content:
@@ -35,26 +35,13 @@ class Digest:
         id: Optional[int] = None,
         content_ids: List[int] = [],
         sent: bool = False,
-        digest_repr: DigestRepr = DigestRepr(DigestTitle(""), DigestContentStr("")),
     ) -> None:
         self.id = id
         self.content_ids = content_ids
         self.sent = sent
-        self.digest_repr = digest_repr
 
     def mark_as_sent(self) -> None:
         self.sent = True
-
-    def store_repr(self, digest_repr: DigestRepr) -> None:
-        self.digest_repr = digest_repr
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "id": self.id,
-            "content_ids": self.content_ids,
-            "sent": self.sent,
-            "digest_repr": self.digest_repr.__dict__,
-        }
 
 
 class ContentSampler(abc.ABC):

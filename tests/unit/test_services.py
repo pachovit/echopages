@@ -127,7 +127,7 @@ def test_deliver_digest() -> None:
     delivery_system = FakeDigestDeliverySystem()
 
     digest = model.Digest(id=1, content_ids=[content.id for content in content_objects])  # type: ignore
-    digest.digest_repr = model.DigestRepr(
+    digest_repr = model.DigestRepr(
         title=model.DigestTitle("source 1"),
         contents_str=model.DigestContentStr(
             "content unit 1,content unit 2,content unit 3"
@@ -135,7 +135,7 @@ def test_deliver_digest() -> None:
     )
     uow.digest_repo.add(digest)
 
-    services.deliver_digest(delivery_system, uow, 1)
+    services.deliver_digest(delivery_system, uow, 1, digest_repr)
 
     assert delivery_system.sent_contents == [
         ("source 1", "content unit 1,content unit 2,content unit 3")
@@ -158,13 +158,13 @@ def test_format_digest_1_content() -> None:
     digest = model.Digest(id=1, content_ids=[1])
     uow.digest_repo.add(digest)
 
-    services.format_digest(uow, digest_formatter, 1)
+    digest_title, digest_content_str = services.format_digest(uow, digest_formatter, 1)
 
     assert (
-        digest.digest_repr.contents_str
+        digest_content_str
         == "{'id': 1, 'text': 'content unit 1', 'source': 'source 1', 'author': 'author 1', 'location': 'location 1'}"
     )
-    assert digest.digest_repr.title == "Daily Digest: source 1"
+    assert digest_title == "Daily Digest: source 1"
 
 
 def test_format_digest_2_contents() -> None:
@@ -183,14 +183,14 @@ def test_format_digest_2_contents() -> None:
     digest = model.Digest(id=1, content_ids=[1, 2])
     uow.digest_repo.add(digest)
 
-    services.format_digest(uow, digest_formatter, 1)
+    digest_title, digest_content_str = services.format_digest(uow, digest_formatter, 1)
 
     for idx in range(1, 3):
-        assert f"source {idx}" in digest.digest_repr.contents_str
-        assert f"author {idx}" in digest.digest_repr.contents_str
-        assert f"location {idx}" in digest.digest_repr.contents_str
-        assert f"content unit {idx}" in digest.digest_repr.contents_str
-    assert digest.digest_repr.title == "Daily Digest: source 1, source 2"
+        assert f"source {idx}" in digest_content_str
+        assert f"author {idx}" in digest_content_str
+        assert f"location {idx}" in digest_content_str
+        assert f"content unit {idx}" in digest_content_str
+    assert digest_title == "Daily Digest: source 1, source 2"
 
 
 def test_trigger_digest() -> None:
@@ -207,7 +207,7 @@ def test_trigger_digest() -> None:
 
     # When: A digest with 3 contents is triggered
     n_samples = 3
-    services.delivery_service(
+    _, digest_content_str = services.delivery_service(
         uow,
         content_sampler,
         n_samples,
@@ -216,12 +216,12 @@ def test_trigger_digest() -> None:
     )
 
     # Then: A digest with 3 contents is generated and stored
-    digest = uow.digest_repo.get_all()[0]
     for content in contents:
-        assert content["source"] in digest.digest_repr.contents_str
-        assert content["author"] in digest.digest_repr.contents_str
-        assert content["location"] in digest.digest_repr.contents_str
-        assert content["text"] in digest.digest_repr.contents_str
+        assert content["source"] in digest_content_str
+        assert content["author"] in digest_content_str
+        assert content["location"] in digest_content_str
+        assert content["text"] in digest_content_str
+    digest = uow.digest_repo.get_all()[0]
     assert digest.sent
 
 
