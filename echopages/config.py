@@ -1,10 +1,32 @@
-import os
+from datetime import datetime
 
-DB_URI = os.environ.get("DB_URI", "data/echopages.db")
-DELIVERY_SYSTEM = os.environ.get("DELIVERY_SYSTEM", "PostmarkDigestDeliverySystem")
-DISK_DELIVERY_SYSTEM_DIRECTORY = os.environ.get(
-    "DISK_DELIVERY_SYSTEM_DIRECTORY", "data/digests"
-)
-RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "recipient@echopages.com")
-NUMBER_OF_UNITS_PER_DIGEST = int(os.environ.get("NUMBER_OF_UNITS_PER_DIGEST", 1))
-DAILY_TIME_OF_DIGEST = os.environ.get("DAILY_TIME_OF_DIGEST", "07:00")
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
+
+
+class Config(BaseSettings):
+    db_uri: str = "data/echopages.db"
+    delivery_system: str = "PostmarkDigestDeliverySystem"
+    disk_delivery_system_directory: str = "data/digests"
+    recipient_email: str = "recipient@echopages.com"
+    number_of_units_per_digest: int = 1
+    daily_time_of_digest: str = "07:00"
+
+    @field_validator("daily_time_of_digest")
+    def validate_time(cls, v: str) -> str:
+        if v is not None:
+            try:
+                datetime.strptime(v, "%H:%M")
+            except ValueError:
+                raise ValueError("daily_time_of_digest must be in the format HH:MM")
+        return v
+
+
+config = None
+
+
+def get_config() -> Config:
+    global config
+    if config is None:
+        config = Config()
+    return config

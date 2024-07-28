@@ -19,20 +19,20 @@ if __name__ == "__main__":
     digest_formatter = bootstrap.get_digest_formatter()
     digest_delivery_system = bootstrap.get_digest_delivery_system()
     content_sampler = bootstrap.get_sampler()
-
+    config = echopages.config.get_config()
     # Configure Scheduler
     logger.info(
-        f"Starting Scheduler at {datetime.now()}, {echopages.config.DAILY_TIME_OF_DIGEST}"
+        f"Starting Scheduler at {datetime.now()}, {config.daily_time_of_digest}"
     )
     scheduler = schedulers.SimpleScheduler(
         lambda: services.delivery_service(
             uow,
             content_sampler,
-            echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
+            config.number_of_units_per_digest,
             digest_formatter,
             digest_delivery_system,
         ),
-        time_of_day=echopages.config.DAILY_TIME_OF_DIGEST,
+        time_of_day=config.daily_time_of_digest,
     )
     scheduler.start()
     uvicorn.run(endpoints.app, host="0.0.0.0", port=8000)

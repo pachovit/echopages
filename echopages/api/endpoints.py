@@ -111,12 +111,12 @@ async def configure_schedule(
     uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
 ) -> ConfigureScheduleResponse:
     content_sampler = bootstrap.get_sampler()
-
+    config = echopages.config.get_config()
     scheduler = schedulers.SimpleScheduler(
         lambda: services.generate_digest(
             uow,
             content_sampler,
-            echopages.config.NUMBER_OF_UNITS_PER_DIGEST,
+            config.number_of_units_per_digest,
         )
     )
 

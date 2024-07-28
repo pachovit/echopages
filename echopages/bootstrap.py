@@ -6,19 +6,19 @@ from echopages.infrastructure.delivery import delivery_system, samplers
 
 
 def get_unit_of_work() -> UnitOfWork:
-    return FileUnitOfWork(echopages.config.DB_URI)
+    config = echopages.config.get_config()
+    return FileUnitOfWork(config.db_uri)
 
 
 def get_digest_delivery_system() -> DigestDeliverySystem:
-    if echopages.config.DELIVERY_SYSTEM == "DiskDigestDeliverySystem":
+    config = echopages.config.get_config()
+    if config.delivery_system == "DiskDigestDeliverySystem":
         return delivery_system.DiskDigestDeliverySystem(
-            echopages.config.DISK_DELIVERY_SYSTEM_DIRECTORY
+            config.disk_delivery_system_directory
         )
 
-    if echopages.config.DELIVERY_SYSTEM == "PostmarkDigestDeliverySystem":
-        return delivery_system.PostmarkDigestDeliverySystem(
-            echopages.config.RECIPIENT_EMAIL
-        )
+    if config.delivery_system == "PostmarkDigestDeliverySystem":
+        return delivery_system.PostmarkDigestDeliverySystem(config.recipient_email)
     raise NotImplementedError("No such delivery system")
 
 
