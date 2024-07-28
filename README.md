@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/pachovit/echopages/blob/main/.resources/EchoPages.png" width="800"/>
+  <img src="https://github.com/pachovit/echopages/blob/main/.resources/logo_slogan.png" width="800"/>
 </p>
 
 ---
