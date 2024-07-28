@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from echopages.domain import model, repositories
 
@@ -60,9 +60,15 @@ class FakeUnitOfWork(repositories.UnitOfWork):
 
 
 class FakeDigestFormatter(model.DigestFormatter):
-    def format(self, contents: List[model.Content]) -> str:
+    def format(self, contents: List[model.Content]) -> model.DigestRepr:
         if contents:
-            return ",".join([str(content.__dict__) for content in contents])
+            title = "Daily Digest: " + ", ".join(
+                [content.source for content in contents]
+            )
+            text = ",".join([str(content.__dict__) for content in contents])
+            return model.DigestRepr(
+                model.DigestTitle(title), model.DigestContentStr(text)
+            )
         else:
             raise ValueError("Digest Is Empty")
 
@@ -71,8 +77,9 @@ class FakeDigestDeliverySystem(model.DigestDeliverySystem):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sent_contents: List[str] = []
+        self.sent_contents: List[Tuple[model.DigestTitle, model.DigestContentStr]] = []
 
-    def deliver_digest(self, digest_str: str) -> None:
-        self.sent_contents.append(digest_str)
-        logger.info(f"Sent contents {digest_str}")
+    def deliver_digest(self, digest_repr: model.DigestRepr) -> None:
+        digest_tuple = digest_repr.title, digest_repr.contents_str
+        self.sent_contents.append(digest_tuple)
+        logger.info(f"Sent contents {digest_tuple}")

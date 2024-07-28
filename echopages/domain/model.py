@@ -1,5 +1,6 @@
 import abc
-from typing import Callable, List, Optional
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, NewType, Optional
 
 
 class Content:
@@ -18,24 +19,42 @@ class Content:
         self.location = location
 
 
+DigestTitle = NewType("DigestTitle", str)
+DigestContentStr = NewType("DigestContentStr", str)
+
+
+@dataclass
+class DigestRepr:
+    title: DigestTitle
+    contents_str: DigestContentStr
+
+
 class Digest:
     def __init__(
         self,
         id: Optional[int] = None,
         content_ids: List[int] = [],
         sent: bool = False,
-        contents_str: str = "",
+        digest_repr: DigestRepr = DigestRepr(DigestTitle(""), DigestContentStr("")),
     ) -> None:
         self.id = id
         self.content_ids = content_ids
         self.sent = sent
-        self.contents_str = contents_str
+        self.digest_repr = digest_repr
 
     def mark_as_sent(self) -> None:
         self.sent = True
 
-    def store_content_str(self, content_str: str) -> None:
-        self.contents_str = content_str
+    def store_repr(self, digest_repr: DigestRepr) -> None:
+        self.digest_repr = digest_repr
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "content_ids": self.content_ids,
+            "sent": self.sent,
+            "digest_repr": self.digest_repr.__dict__,
+        }
 
 
 class ContentSampler(abc.ABC):
@@ -48,13 +67,13 @@ class ContentSampler(abc.ABC):
 
 class DigestFormatter(abc.ABC):
     @abc.abstractmethod
-    def format(self, contents: List[Content]) -> str:
+    def format(self, contents: List[Content]) -> DigestRepr:
         raise NotImplementedError
 
 
 class DigestDeliverySystem(abc.ABC):
     @abc.abstractmethod
-    def deliver_digest(self, digest_str: str) -> None:
+    def deliver_digest(self, digest_repr: DigestRepr) -> None:
         raise NotImplementedError
 
 

@@ -50,8 +50,8 @@ def test_trigger_digest() -> None:
     with uow:
         digest = uow.digest_repo.get_all()[0]
         for content in contents:
-            assert content["source"] in digest.contents_str
-            assert content["author"] in digest.contents_str
-            assert content["location"] in digest.contents_str
-            assert content["text"] in digest.contents_str
+            assert content["source"] in digest.digest_repr.contents_str
+            assert content["author"] in digest.digest_repr.contents_str
+            assert content["location"] in digest.digest_repr.contents_str
+            assert content["text"] in digest.digest_repr.contents_str
         assert digest.sent

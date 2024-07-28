@@ -27,10 +27,11 @@ def test_trigger_digest() -> None:
     r = client.post(f"{url}/trigger_digest", json={"n_units": 2})
 
     assert r.status_code == 200
-    assert "sample content 123" in r.json()["digest_str"]
-    assert "sample author" in r.json()["digest_str"]
-    assert "sample location" in r.json()["digest_str"]
-    assert "sample content 123" in r.json()["digest_str"]
+    assert "sample source" in r.json()["digest_content_str"]
+    assert "sample author" in r.json()["digest_content_str"]
+    assert "sample location" in r.json()["digest_content_str"]
+    assert "sample content 123" in r.json()["digest_content_str"]
+    assert "sample source" in r.json()["digest_title"]
 
 
 def test_configure_schedule() -> None:

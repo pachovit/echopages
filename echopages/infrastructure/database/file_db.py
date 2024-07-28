@@ -5,7 +5,7 @@ import os
 from typing import List, Optional
 
 from echopages.domain import repositories
-from echopages.domain.model import Content, Digest
+from echopages.domain.model import Content, Digest, DigestRepr
 
 
 class FileContentRepository(repositories.ContentRepository):
@@ -58,11 +58,14 @@ class FileDigestRepository(repositories.DigestRepository):
 
     def _load(self) -> None:
         with open(self.filepath, "r") as file:
-            self.digests = [Digest(**digest) for digest in json.load(file)]
+            self.digests = []
+            for digest_dict in json.load(file):
+                digest_dict["digest_repr"] = DigestRepr(**digest_dict["digest_repr"])
+                self.digests.append(Digest(**digest_dict))
 
     def save(self) -> None:
         with open(self.filepath, "w") as file:
-            json.dump([digest.__dict__ for digest in self.digests], file, indent=2)
+            json.dump([digest.to_dict() for digest in self.digests], file, indent=2)
 
     def get_by_id(self, digest_id: int) -> Optional[Digest]:
         self._load()

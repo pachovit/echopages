@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from echopages.domain import model, repositories
 
@@ -67,7 +67,8 @@ def deliver_digest(
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
         assert digest is not None
-        digest_delivery_system.deliver_digest(digest.contents_str)
+
+        digest_delivery_system.deliver_digest(digest.digest_repr)
         digest.mark_as_sent()
         uow.digest_repo.update(digest)
         uow.commit()
@@ -77,7 +78,7 @@ def format_digest(
     uow: repositories.UnitOfWork,
     digest_formatter: model.DigestFormatter,
     digest_id: int,
-) -> str:
+) -> Tuple[model.DigestTitle, model.DigestContentStr]:
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
         assert digest is not None
@@ -88,12 +89,12 @@ def format_digest(
             assert content is not None
             contents.append(content)
 
-        digest_str = digest_formatter.format(contents)
-        digest.store_content_str(digest_str)
+        digest_repr = digest_formatter.format(contents)
+        digest.store_repr(digest_repr)
         uow.digest_repo.update(digest)
         uow.commit()
-        content_str = digest.contents_str
-    return content_str
+
+        return digest_repr.title, digest_repr.contents_str
 
 
 def delivery_service(
@@ -102,10 +103,13 @@ def delivery_service(
     number_of_units: int,
     digest_formatter: model.DigestFormatter,
     digest_delivery_system: model.DigestDeliverySystem,
-) -> str:
+) -> Tuple[model.DigestTitle, model.DigestContentStr]:
     with uow:
         digest_id = generate_digest(uow, content_sampler, number_of_units)
 
-        content_str = format_digest(uow, digest_formatter, digest_id)
+        digest_title, digest_content_str = format_digest(
+            uow, digest_formatter, digest_id
+        )
         deliver_digest(digest_delivery_system, uow, digest_id)
-    return content_str
+
+    return digest_title, digest_content_str

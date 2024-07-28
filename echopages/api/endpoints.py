@@ -64,7 +64,8 @@ class TriggerDigest(BaseModel):
 
 
 class TriggerDigestResponse(BaseModel):
-    digest_str: str
+    digest_title: str
+    digest_content_str: str
 
 
 @app.post("/trigger_digest")
@@ -78,7 +79,7 @@ async def trigger_digest(
     content_sampler = bootstrap.get_sampler()
     digest_formatter = bootstrap.get_digest_formatter()
 
-    digest_str = services.delivery_service(
+    digest_title, digest_content_str = services.delivery_service(
         uow,
         content_sampler,
         trigger_digest_request.n_units,
@@ -86,8 +87,9 @@ async def trigger_digest(
         digest_delivery_system,
     )
 
-    assert digest_str is not None
-    return TriggerDigestResponse(digest_str=digest_str)
+    return TriggerDigestResponse(
+        digest_title=digest_title, digest_content_str=digest_content_str
+    )
 
 
 class Schedule(BaseModel):
