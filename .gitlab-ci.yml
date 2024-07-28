@@ -16,10 +16,10 @@ test:
     - PYTHONPATH=. pytest --cov=echopages -s tests
   rules:
     - changes:
-      - "**/*.py"
-      - "pyproject.toml"
-      - "tests/**"
-      - "features/**"
+        - "**/*.py"
+        - "pyproject.toml"
+        - "tests/**"
+        - "features/**"
 
 build:
   stage: build
@@ -37,11 +37,11 @@ build:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
-      - "**/*.py"
-      - "pyproject.toml"
-      - "tests/**"
-      - "features/**"
-      - "Dockerfile"
+        - "**/*.py"
+        - "pyproject.toml"
+        - "tests/**"
+        - "features/**"
+        - "Dockerfile"
 
 deploy:
   stage: deploy
@@ -51,7 +51,7 @@ deploy:
   environment:
     name: production
   before_script:
-    - 'command -v ssh-agent >/dev/null || ( apk add --no-cache openssh-client )'
+    - "command -v ssh-agent >/dev/null || ( apk add --no-cache openssh-client )"
     - eval $(ssh-agent -s)
     - chmod 400 "$SSH_PRIVATE_KEY"
     - ssh-add "$SSH_PRIVATE_KEY"
@@ -62,19 +62,18 @@ deploy:
     - scp -o StrictHostKeyChecking=no docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:/echopages/docker-compose.yml
     - scp -o StrictHostKeyChecking=no production.env $DEPLOY_USER@$DEPLOY_SERVER:/echopages/production.env
     - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
-        echo 'APP_EMAIL_ADDRESS=${APP_EMAIL_ADDRESS}' >> /echopages/production.env;
-        echo 'POSTMARK_SERVER_API_TOKEN=${POSTMARK_SERVER_API_TOKEN}' >> /echopages/production.env;
-        echo 'RECIPIENT_EMAIL=${RECIPIENT_EMAIL}' >> /echopages/production.env;
-        docker pull pachovit/echopages:latest;
-        docker compose -f /echopages/docker-compose.yml --env-file /echopages/production.env up -d;
+      echo 'POSTMARK_SERVER_API_TOKEN=${POSTMARK_SERVER_API_TOKEN}' >> /echopages/production.env;
+      echo 'RECIPIENT_EMAIL=${RECIPIENT_EMAIL}' >> /echopages/production.env;
+      docker pull pachovit/echopages:latest;
+      docker compose -f /echopages/docker-compose.yml --env-file /echopages/production.env up -d;
       "
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
-      - "**/*.py"
-      - "pyproject.toml"
-      - "tests/**"
-      - "features/**"
-      - "Dockerfile"
-      - "docker-compose.yml"
-      - "production.env"
+        - "**/*.py"
+        - "pyproject.toml"
+        - "tests/**"
+        - "features/**"
+        - "Dockerfile"
+        - "docker-compose.yml"
+        - "production.env"
