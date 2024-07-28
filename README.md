@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="https://github.com/pachovit/echopages/blob/main/.resources/EchoPages.png" width="800"/>
+</p>
+
+---
+
 # Echo Pages
 
 *Read, Repeat, Retain*
