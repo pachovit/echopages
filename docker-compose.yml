@@ -7,7 +7,6 @@ services:
     #   - "8000:8000"
     environment:
       - TZ=Europe/Berlin
-      - DB_URI=${DB_URI}
       - APP_EMAIL_ADDRESS=${APP_EMAIL_ADDRESS}
       - POSTMARK_SERVER_API_TOKEN=${POSTMARK_SERVER_API_TOKEN}
       - RECIPIENT_EMAIL=${RECIPIENT_EMAIL}

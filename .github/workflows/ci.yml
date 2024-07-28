@@ -24,7 +24,7 @@ jobs:
         run: |
           apt-get update && apt-get install -y curl && \
           curl -sSL https://install.python-poetry.org | python3 - && \
-          ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+          ln -s /github/home/.local/bin/poetry /usr/local/bin/poetry
       - name: Configure Poetry
         run: poetry config virtualenvs.create false && poetry install
       - name: Run tests
@@ -45,7 +45,7 @@ jobs:
         run: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
         env:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_USERNAME: pachovit
       - name: Build and push Docker image
         run: |
           docker build -t pachovit/echopages:latest .
