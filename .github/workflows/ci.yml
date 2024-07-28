@@ -45,7 +45,7 @@ jobs:
         run: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
         env:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_USERNAME: pachovit
       - name: Build and push Docker image
         run: |
           docker build -t pachovit/echopages:latest .
