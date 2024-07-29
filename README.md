@@ -12,15 +12,15 @@
 ![stars](https://img.shields.io/github/stars/pachovit/echopages)
 ![forks](https://img.shields.io/github/forks/pachovit/echopages)
 
-EchoPages is a service designed to provide users with scheduled digests of their chosen content, such as summaries of book chapters or articles. Inspired by services like [Readwise](https://readwise.io/), EchoPages enhances the reading and learning experience by sending personalized content snippets on a predefined schedule, ensuring continuous engagement and retention.
+EchoPages is a service designed to provide users with scheduled digests of their chosen content, such as summaries of book chapters or articles. Inspired by services like [Readwise](https://readwise.io/), EchoPages enhances the reading and learning experience by sending personalized content snippets on a predefined schedule, ensuring continuous engagement and retention 📖🔁🧠.
 
-## Why Choose EchoPages?
+## Why Choose EchoPages? 🌟
 
-- **Self-Managed Content**: EchoPages allows you to carefully manage your content. Whether it's a detailed summary of a book chapter or brief quotes, you have the flexibility to add any content that matters to you.
-- **Customizable Delivery**: Configure EchoPages to deliver content that suits your needs. Receive a daily summary of a book chapter, or several smaller snippets, depending on your preference.
-- **Free and Open Source**: EchoPages is free to use and fully open-source. You can self-host it and take complete control over your data and usage.
+- 📋 **Self-Managed Content**: EchoPages allows you to carefully manage your content. Whether it's a detailed summary of a book chapter or brief quotes, you have the flexibility to add any content that matters to you
+- 📬 **Customizable Delivery**: Configure EchoPages to deliver content that suits your needs. Receive a daily summary of a book chapter, or several smaller snippets, depending on your preference
+- 🆓 **Free and Open Source**: EchoPages is free to use and fully open-source. You can self-host it and take complete control over your data and usage
 
-## Getting Started
+## Getting Started 🚀
 
 ### Prerequisites
 
@@ -42,12 +42,12 @@ EchoPages is a service designed to provide users with scheduled digests of their
 
   Create a `.env` file in the root directory. You can take as reference the [example env file](example.env). Adjust the values as needed, and make sure to specify the following variables:
 
-  - `TZ`: Timezone where your system runs. E.g. `Europe/Berlin`.
-  - `NUMBER_OF_UNITS_PER_DIGEST`: How many content units you want to receive every digest.
-  - `DAILY_TIME_OF_DIGEST`: What time of the day you want to receive your daily digest. In format `"HH:MM"`.
-  - `RECIPIENT_EMAIL`: Where do you want to receive your digests.
-  - `APP_EMAIL_ADDRESS`: Email address that is used to send the digests.
-  - `POSTMARK_SERVER_API_TOKEN`: Postmark API token used to send the emails.
+  - `TZ`: Timezone where your system runs. E.g. `Europe/Berlin`
+  - `NUMBER_OF_UNITS_PER_DIGEST`: How many content units you want to receive every digest
+  - `DAILY_TIME_OF_DIGEST`: What time of the day you want to receive your daily digest. In format `"HH:MM"`
+  - `RECIPIENT_EMAIL`: Where do you want to receive your digests
+  - `APP_EMAIL_ADDRESS`: Email address that is used to send the digests
+  - `POSTMARK_SERVER_API_TOKEN`: Postmark API token used to send the emails
 
 3. **Run with Docker Compose:**
 
@@ -103,10 +103,10 @@ EchoPages is a service designed to provide users with scheduled digests of their
 
   The application will automatically send out digests based on your configured schedule.
 
-## Contributing
+## Contributing 🤝
 
 We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
 
-## License
+## License 📄
 
 EchoPages is open-sourced software licensed under the [GPL-3.0 license](LICENSE).
