@@ -22,7 +22,10 @@ logger = logging.getLogger(__name__)
 
 
 class HTMLDigestFormatter(DigestFormatter):
+    """Converts a list of Content objects into a formatted HTML digest."""
+
     def _build_title(self, contents: List[Content]) -> str:
+        """Builds the title of the digest based on the contents."""
         if not contents:
             return ""
 
@@ -32,6 +35,7 @@ class HTMLDigestFormatter(DigestFormatter):
         return "Daily Digest: " + ", ".join([content.source for content in contents])
 
     def _build_digest_str(self, contents: List[Content]) -> str:
+        """Builds the HTML content of the digest."""
         template_str = open(
             "echopages/infrastructure/templates/digest_template.html"
         ).read()
@@ -67,7 +71,10 @@ class HTMLDigestFormatter(DigestFormatter):
 
 
 class PostmarkDigestDeliverySystem(DigestDeliverySystem):
+    """Delivers a digest via email using Postmark."""
+
     def __init__(self, recipient_email: str) -> None:
+        """Initializes the delivery system with the recipient's email address."""
         self.recipient_email = recipient_email
 
     def deliver_digest(self, digest_repr: DigestRepr) -> None:
@@ -88,10 +95,14 @@ class PostmarkDigestDeliverySystem(DigestDeliverySystem):
 
 
 class DiskDigestDeliverySystem(DigestDeliverySystem):
+    """Delivers a digest to disk as an HTML file."""
+
     def __init__(self, directory: str) -> None:
+        """Initializes the delivery system with the directory to store the digests."""
         self.directory = directory
 
     def deliver_digest(self, digest_repr: DigestRepr) -> None:
+        """Saves the digest to disk as an HTML file."""
         digest_id = uuid.uuid4().hex
         filename = f"digest_{digest_id}.html"
         # Ensure the directory exists

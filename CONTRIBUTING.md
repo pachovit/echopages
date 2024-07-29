@@ -20,6 +20,13 @@ For the main features of the application, we use BDD. The Gherkin features can b
 
 The reason behind choosing `pytest-bdd` versus `behave`, was to have a centralized way of running tests and evaluating coverage, including the functional tests.
 
+### Coding Style
+
+We favor the use of type hints and meaningful naming, over excesively descriptive docstrings. The used 
+docstring style focus on description of the functions and variables, additional context, and examples.
+
+We use [ruff](https://github.com/astral-sh/ruff) in order to lint and format code.
+
 ### CI/CD
 
 We try to be as close as possible to trunk-based-development and Continuous Delivery. For that, the main branch has a pipeline with the following steps:

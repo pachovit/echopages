@@ -7,6 +7,19 @@ def add_content(
     uow: repositories.UnitOfWork,
     content_data: Dict[str, str],
 ) -> int:
+    """
+    Adds a new content to the content repository.
+
+    Args:
+        uow (repositories.UnitOfWork): The unit of work instance.
+        content_data (Dict[str, str]): A dictionary containing the content data.
+
+    Returns:
+        int: The ID of the newly added content.
+
+    Raises:
+        None.
+    """
     with uow:
         content = model.Content(id=None, **content_data)
         content_id = uow.content_repo.add(content)

@@ -4,6 +4,12 @@ from echopages.domain import model
 
 
 class SimpleContentSampler(model.ContentSampler):
+    """
+    A simple content sampler that returns a given number of content units
+    starting from the last content sent. If there are not enough content units
+    available, it loops back to the beginning of the list.
+    """
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -13,10 +19,6 @@ class SimpleContentSampler(model.ContentSampler):
         contents: List[model.Content],
         number_of_units: int,
     ) -> List[model.Content]:
-        """
-        Returns `number_of_units` content units starting from the last content sent.
-        If there are not enough content units available, it loops back to the beginning of the list.
-        """
         if len(contents) == 0:
             raise ValueError("No content units available")
 
