@@ -8,7 +8,7 @@
 
 EchoPages is a service designed to provide users with scheduled digests of their chosen content, such as summaries of book chapters or articles. Inspired by services like [Readwise](https://readwise.io/), EchoPages enhances the reading and learning experience by sending personalized content snippets on a predefined schedule, ensuring continuous engagement and retention.
 
-### Why Choose EchoPages?
+## Why Choose EchoPages?
 
 - **Self-Managed Content**: EchoPages allows you to carefully manage your content. Whether it's a detailed summary of a book chapter or brief quotes, you have the flexibility to add any content that matters to you.
 - **Customizable Delivery**: Configure EchoPages to deliver content that suits your needs. Receive a daily summary of a book chapter, or several smaller snippets, depending on your preference.
@@ -103,4 +103,4 @@ We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING
 
 ## License
 
-EchoPages is open-sourced software licensed under the [MIT license](LICENSE).
+EchoPages is open-sourced software licensed under the [GPL-3.0 license](LICENSE).

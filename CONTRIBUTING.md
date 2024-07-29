@@ -6,7 +6,7 @@ Thank you for your interest in contributing to EchoPages! We welcome contributio
 
 ### Architecture
 
-Onion Architecture with the following layers (order from inside-out):
+Onion Architecture with layers following Domain Driven Design (order from inside-out):
 - `domain`: Domain objects, business logic and interfaces
 - `application`: Orchestration of domain objects
 - `infrastructure`: Lower-level concerns and specific implementations of interfaces
@@ -18,7 +18,7 @@ In which an inner layer should never depend in an outer layer. There's an archit
 
 For the main features of the application, we use BDD. The Gherkin features can be found in the [features](./features/) directory, and their corresponding tests (using [pytest-bdd](https://pytest-bdd.readthedocs.io/en/stable/)) in [tests/functional/*.py](./tests/functional).
 
-The reason behind choosing pytest-bdd versus `behave`, was to have a centralized way of running tests and evaluating coverage, including the functional tests.
+The reason behind choosing `pytest-bdd` versus `behave`, was to have a centralized way of running tests and evaluating coverage, including the functional tests.
 
 ### CI/CD
 
