@@ -6,6 +6,12 @@
 
 # EchoPages
 
+[![CI](https://img.shields.io/github/actions/workflow/status/pachovit/echopages/ci.yml)](https://github.com/pachovit/echopages/actions)
+[![license](https://img.shields.io/github/license/pachovit/echopages)](https://github.com/pachovit/echopages/blob/main/LICENSE)
+![issues](https://img.shields.io/github/issues/pachovit/echopages)
+![stars](https://img.shields.io/github/stars/pachovit/echopages)
+![forks](https://img.shields.io/github/forks/pachovit/echopages)
+
 EchoPages is a service designed to provide users with scheduled digests of their chosen content, such as summaries of book chapters or articles. Inspired by services like [Readwise](https://readwise.io/), EchoPages enhances the reading and learning experience by sending personalized content snippets on a predefined schedule, ensuring continuous engagement and retention.
 
 ## Why Choose EchoPages?
