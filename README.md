@@ -29,7 +29,7 @@ EchoPages is a service designed to provide users with scheduled digests of their
 - Git
 - A [Postmark](https://postmarkapp.com/) account, and a Postmark API token
 
-### Installation
+### Installation and Usage
 
 1. **Clone the Repository:**
 
@@ -55,13 +55,11 @@ EchoPages is a service designed to provide users with scheduled digests of their
   docker-compose --env-file /path/to/your/file.env up -d
   ```
 
-4. **Access the Application:**
+4. **Explore the API docs:**
 
-  The application will be available at `http://localhost:8000`.
+  The application will be available at `http://localhost:8000`. You can access the API documentation in `http://localhost:8000/docs`.
 
-### Usage
-
-1. **Add Content:**
+5. **Add Content:**
 
   Use the `/add_content` endpoint to add new content. You can do this via an HTTP client like curl or Postman:
 
@@ -86,7 +84,6 @@ EchoPages is a service designed to provide users with scheduled digests of their
 
   You'll have to convert the image to embed it (you can find an utility function to do this in [this file](utils/markdown_processing.py)):
   ```
-  
     # Some Nice Book Chapter Summary
     
     # Topic 1
@@ -99,9 +96,9 @@ EchoPages is a service designed to provide users with scheduled digests of their
     * Key point 2: Yet another thing
   ```
   
-2. **Receive Digest:**
+6. **Receive Digest:**
 
-  The application will automatically send out digests based on your configured schedule.
+  That's it! The application will automatically send you digests based on your content and your configured schedule.
 
 ## Contributing 🤝
 
