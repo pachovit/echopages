@@ -27,3 +27,6 @@ def test_architecture() -> None:
     module_should_not_depend("domain", "application")
     module_should_not_depend("domain", "infrastructure")
     module_should_not_depend("application", "infrastructure")
+    module_should_not_depend("domain", "api")
+    module_should_not_depend("application", "api")
+    module_should_not_depend("infrastructure", "api")

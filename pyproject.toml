@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "echopages"
 version = "0.1.0"
-description = ""
-authors = ["Gilberto Lem <gilberto.lem@orbem.ai>"]
+description = "Echopages is a content management and digest delivery system that allows users to receive content digests recurrently."
+authors = ["G L"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
