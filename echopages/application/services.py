@@ -7,8 +7,7 @@ def add_content(
     uow: repositories.UnitOfWork,
     content_data: Dict[str, str],
 ) -> int:
-    """
-    Adds a new content to the content repository.
+    """Adds a new content to the content repository.
 
     Args:
         uow (repositories.UnitOfWork): The unit of work instance.

@@ -4,8 +4,7 @@ import re
 
 
 def convert_images_to_base64(text: str, root_dir: str) -> str:
-    """
-    Converts all image paths in a given text to base64 data URIs.
+    """Converts all image paths in a given text to base64 data URIs.
 
     Args:
         text: The text that contains image paths.

@@ -6,17 +6,13 @@ from echopages.infrastructure.delivery import delivery_system, samplers
 
 
 def get_unit_of_work() -> UnitOfWork:
-    """
-    Get a unit of work for the application based on the configuration.
-    """
+    """Get a unit of work for the application based on the configuration."""
     config = echopages.config.get_config()
     return FileUnitOfWork(config.db_uri)
 
 
 def get_digest_delivery_system() -> DigestDeliverySystem:
-    """
-    Get the digest delivery system based on the configuration.
-    """
+    """Get the digest delivery system based on the configuration."""
     config = echopages.config.get_config()
     if config.delivery_system == "DiskDigestDeliverySystem":
         return delivery_system.DiskDigestDeliverySystem(
@@ -29,14 +25,10 @@ def get_digest_delivery_system() -> DigestDeliverySystem:
 
 
 def get_sampler() -> samplers.SimpleContentSampler:
-    """
-    Get the content sampler based on the configuration.
-    """
+    """Get the content sampler based on the configuration."""
     return samplers.SimpleContentSampler()
 
 
 def get_digest_formatter() -> DigestFormatter:
-    """
-    Get the digest formatter based on the configuration.
-    """
+    """Get the digest formatter based on the configuration."""
     return delivery_system.HTMLDigestFormatter()

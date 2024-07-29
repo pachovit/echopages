@@ -122,7 +122,10 @@ async def trigger_digest(
 class Schedule(BaseModel):
     time_of_day: str = Field(
         ...,
-        description="The time of day at which the digest should be generated, in format HH:MM.",
+        description=(
+            "The time of day at which the digest should "
+            "be generated, in format HH:MM."
+        ),
         examples=["07:00", "15:30"],
     )
 

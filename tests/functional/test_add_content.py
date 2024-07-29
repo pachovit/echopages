@@ -21,7 +21,10 @@ def test_add_content_missing_text() -> None:
 
 @given(
     parsers.parse(
-        "a content with source {source}, author {author}, location {location}, and text {text}"
+        (
+            "a content with source {source}, author {author}, "
+            "location {location}, and text {text}"
+        )
     ),
     target_fixture="content_metadata",
 )
@@ -59,7 +62,10 @@ def step_and_content_should_be_retrievable(
 
 @given(
     parsers.parse(
-        "a content without text, with source {source}, author {author}, location {location}"
+        (
+            "a content without text, with source {source}, "
+            "author {author}, location {location}"
+        )
     ),
     target_fixture="content_metadata_without_text",
 )

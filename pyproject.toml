@@ -24,14 +24,9 @@ pytestarch = "^3.0.0"
 pytest-cov = "^5.0.0"
 time-machine = "^2.14.2"
 requests = "^2.32.3"
-mypy = "^1.10.1"
 pytest-bdd = "^7.2.0"
-types-markdown = "^3.6.0.20240316"
+pre-commit = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[[tool.mypy.overrides]]
-module = "postmarker.*,behave.*"
-ignore_missing_imports = true

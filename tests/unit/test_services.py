@@ -126,7 +126,8 @@ def test_deliver_digest() -> None:
 
     delivery_system = FakeDigestDeliverySystem()
 
-    digest = model.Digest(id=1, content_ids=[content.id for content in content_objects])  # type: ignore
+    content_ids = [content.id for content in content_objects]
+    digest = model.Digest(id=1, content_ids=content_ids)  # type: ignore
     digest_repr = model.DigestRepr(
         title=model.DigestTitle("source 1"),
         contents_str=model.DigestContentStr(
@@ -160,9 +161,9 @@ def test_format_digest_1_content() -> None:
 
     digest_title, digest_content_str = services.format_digest(uow, digest_formatter, 1)
 
-    assert (
-        digest_content_str
-        == "{'id': 1, 'text': 'content unit 1', 'source': 'source 1', 'author': 'author 1', 'location': 'location 1'}"
+    assert digest_content_str == (
+        "{'id': 1, 'text': 'content unit 1', 'source': 'source 1', "
+        "'author': 'author 1', 'location': 'location 1'}"
     )
     assert digest_title == "Daily Digest: source 1"
 
@@ -267,5 +268,8 @@ def test_all_flow() -> None:
         for ii, id in enumerate([1, 2, 1, 2]):
             assert delivery_system.sent_contents[ii] == (
                 f"Daily Digest: source {id}",
-                f"{{'id': {id}, 'text': 'text {id}', 'source': 'source {id}', 'author': 'author {id}', 'location': 'location {id}'}}",
+                (
+                    f"{{'id': {id}, 'text': 'text {id}', 'source': 'source {id}', "
+                    f"'author': 'author {id}', 'location': 'location {id}'}}"
+                ),
             )

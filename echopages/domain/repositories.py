@@ -39,8 +39,7 @@ class DigestRepository(abc.ABC):
 
 
 class UnitOfWork(abc.ABC):
-    """
-    Abstract base class for a unit of work.
+    """Abstract base class for a unit of work.
 
     A unit of work is a transactional object that represents a single logical
     unit of work. It is used to encapsulate the business logic that needs to
@@ -66,45 +65,39 @@ class UnitOfWork(abc.ABC):
     digest_repo: DigestRepository
 
     def __enter__(self) -> UnitOfWork:
-        """
-        Enter the unit of work.
-        """
+        """Enter the unit of work."""
         return self
 
     def __exit__(self, *args) -> None:  # type: ignore
-        """
-        Exit the unit of work.
+        """Exit the unit of work.
 
-        If an exception is raised during the execution of the unit of work,
-        the changes are rolled back.
+        If an exception is raised during the execution of the unit of work, the changes
+        are rolled back.
         """
         self.rollback()
 
     def commit(self) -> None:
-        """
-        Commit the changes made in the unit of work.
+        """Commit the changes made in the unit of work.
 
-        This method should be called after all the changes have been made to
-        the repositories. It will commit the changes atomically.
+        This method should be called after all the changes have been made to the
+        repositories. It will commit the changes atomically.
         """
         self._commit()
 
     @abc.abstractmethod
     def _commit(self) -> None:
-        """
-        Commit the changes made in the unit of work.
+        """Commit the changes made in the unit of work.
 
-        This method should be implemented by subclasses to provide the
-        functionality to commit the changes made in the unit of work.
+        This method should be implemented by subclasses to provide the functionality to
+        commit the changes made in the unit of work.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
     def rollback(self) -> None:
-        """
-        Rollback the changes made in the unit of work.
+        """Rollback the changes made in the unit of work.
 
-        This method should be implemented by subclasses to provide the
-        functionality to rollback the changes made in the unit of work.
+        This method should be implemented by subclasses to provide the functionality to
+        rollback the changes made in the unit of work.
         """
         raise NotImplementedError

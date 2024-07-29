@@ -8,9 +8,7 @@ from echopages.domain import model
 
 
 class SimpleScheduler(model.Scheduler):
-    """
-    A simple scheduler based on the `schedule` library.
-    """
+    """A simple scheduler based on the `schedule` library."""
 
     def __init__(
         self,
@@ -38,9 +36,7 @@ class SimpleScheduler(model.Scheduler):
         thread.start()
 
     def _run(self) -> None:
-        """
-        Run the scheduled function at the configured time interval.
-        """
+        """Run the scheduled function at the configured time interval."""
         while self.continue_running:
             schedule.run_pending()
             sleep(self.sleep_interval)

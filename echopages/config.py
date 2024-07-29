@@ -29,9 +29,7 @@ class Config(BaseSettings):
 
     @field_validator("daily_time_of_digest")
     def validate_time(cls, v: str) -> str:
-        """
-        Validate the daily time of digest format.
-        """
+        """Validate the daily time of digest format."""
         if v is not None:
             try:
                 datetime.strptime(v, "%H:%M")
@@ -44,9 +42,7 @@ config = None
 
 
 def get_config() -> Config:
-    """
-    Returns a singleton configuration object.
-    """
+    """Returns a singleton configuration object."""
     global config
     if config is None:
         config = Config()

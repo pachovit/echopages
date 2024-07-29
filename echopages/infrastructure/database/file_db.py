@@ -9,13 +9,10 @@ from echopages.domain.model import Content, Digest
 
 
 class FileContentRepository(repositories.ContentRepository):
-    """
-    Content repository using a file to store the data as JSON.
-    """
+    """Content repository using a file to store the data as JSON."""
 
     def __init__(self, filepath: str) -> None:
-        """
-        Initialize the repository with the given file path.
+        """Initialize the repository with the given file path.
 
         Args:
             filepath: The path to the file.
@@ -29,16 +26,12 @@ class FileContentRepository(repositories.ContentRepository):
             self._load()
 
     def _load(self) -> None:
-        """
-        Load the contents from the file.
-        """
+        """Load the contents from the file."""
         with open(self.filepath, "r") as file:
             self.contents = [Content(**content) for content in json.load(file)]
 
     def save(self) -> None:
-        """
-        Save the contents to the file.
-        """
+        """Save the contents to the file."""
         with open(self.filepath, "w") as file:
             json.dump([content.__dict__ for content in self.contents], file, indent=2)
 
@@ -63,13 +56,10 @@ class FileContentRepository(repositories.ContentRepository):
 
 
 class FileDigestRepository(repositories.DigestRepository):
-    """
-    Digest repository using a file to store the data as JSON.
-    """
+    """Digest repository using a file to store the data as JSON."""
 
     def __init__(self, filepath: str):
-        """
-        Initialize the repository with the given file path.
+        """Initialize the repository with the given file path.
 
         Args:
             filepath: The path to the file.
@@ -83,18 +73,14 @@ class FileDigestRepository(repositories.DigestRepository):
             self._load()
 
     def _load(self) -> None:
-        """
-        Load the digests from the file.
-        """
+        """Load the digests from the file."""
         with open(self.filepath, "r") as file:
             self.digests = [
                 Digest.from_dict(digest_dict) for digest_dict in json.load(file)
             ]
 
     def save(self) -> None:
-        """
-        Save the digests to the file.
-        """
+        """Save the digests to the file."""
         with open(self.filepath, "w") as file:
             json.dump([digest.to_dict() for digest in self.digests], file, indent=2)
 
@@ -127,13 +113,10 @@ class FileDigestRepository(repositories.DigestRepository):
 
 
 class FileUnitOfWork(repositories.UnitOfWork):
-    """
-    Unit of work using files to store the data as JSONs.
-    """
+    """Unit of work using files to store the data as JSONs."""
 
     def __init__(self, db_path: str) -> None:
-        """
-        Initialize the unit of work with the given database path.
+        """Initialize the unit of work with the given database path.
 
         Args:
             db_path: The path to the directory where the files will be stored.
