@@ -25,12 +25,12 @@ The reason behind choosing `pytest-bdd` versus `behave`, was to have a centraliz
 We favor the use of type hints and meaningful naming, over excesively descriptive docstrings. The used 
 docstring style focus on description of the functions and variables, additional context, and examples.
 
-We use [ruff](https://github.com/astral-sh/ruff) in order to lint and format code.
+The tooling used to maintain style can be found in the [.pre-commit-config.yaml](.pre-commit-config.yaml) file.
 
 ### CI/CD
 
 We try to be as close as possible to trunk-based-development and Continuous Delivery. For that, the main branch has a pipeline with the following steps:
-- `test`: Run all tests and mypy
+- `test`: Run all tests and pre-commits
 - `build`: Build the docker image and push to [dockerhub](https://hub.docker.com/r/pachovit/echopages)
 - `deploy`: to production
 
@@ -52,9 +52,9 @@ We try to be as close as possible to trunk-based-development and Continuous Deli
 3. **Running Tests:**
 
     ```sh
-    make test # Run all tests and mypy
+    make test # Run all tests and pre-commits
     make functional # Runs only BDD tests of features defined in the `features` directory
-    make coverage # Run all tests, compute coverage, and run mypy
+    make coverage # Run all tests, compute coverage, and run pre-commits
     ```
 
 3. **Running the Application locally:**
