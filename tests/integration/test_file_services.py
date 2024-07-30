@@ -1,3 +1,4 @@
+import glob
 from typing import Dict
 
 from echopages.application import services
@@ -7,6 +8,7 @@ from echopages.bootstrap import (
     get_sampler,
     get_unit_of_work,
 )
+from echopages.infrastructure.delivery.delivery_system import FileDigestDeliverySystem
 
 
 def sample_content_data(id: int) -> Dict[str, str]:
@@ -22,6 +24,7 @@ def test_trigger_digest() -> None:
     uow = get_unit_of_work()
     digest_formatter = get_digest_formatter()
     delivery_system = get_digest_delivery_system()
+    assert isinstance(delivery_system, FileDigestDeliverySystem)
 
     content_sampler = get_sampler()
 
@@ -38,7 +41,7 @@ def test_trigger_digest() -> None:
 
     # When: A digest with 3 contents is triggered
     n_samples = 3
-    _, digest_content_str = services.delivery_service(
+    services.delivery_service(
         uow,
         content_sampler,
         n_samples,
@@ -49,9 +52,12 @@ def test_trigger_digest() -> None:
     # Then: A digest with 3 contents is generated and stored
     with uow:
         digest = uow.digest_repo.get_all()[0]
-        for content in contents:
-            assert content["source"] in digest_content_str
-            assert content["author"] in digest_content_str
-            assert content["location"] in digest_content_str
-            assert content["text"] in digest_content_str
         assert digest.sent_at is not None
+    digest_file = next(iter(glob.glob(f"{delivery_system.directory}/*.html")))
+    with open(digest_file) as delivered_digest:
+        delivered_digest_content = delivered_digest.read()
+        for content in contents:
+            assert content["source"] in delivered_digest_content
+            assert content["author"] in delivered_digest_content
+            assert content["location"] in delivered_digest_content
+            assert content["text"] in delivered_digest_content

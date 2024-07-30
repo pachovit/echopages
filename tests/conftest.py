@@ -9,7 +9,7 @@ from echopages.config import get_config
 
 TEST_DB_URI = "./test.db"
 TEST_DIGESTS_DIR = "./test_digests"
-TEST_DELIVERY_SYSTEM = "DiskDigestDeliverySystem"
+TEST_DELIVERY_SYSTEM = "FileDigestDeliverySystem"
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -23,11 +23,11 @@ def dummy_db_uri() -> Generator[None, None, None]:
         shutil.rmtree(TEST_DB_URI)
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def fake_delivery_system() -> Generator[None, None, None]:
     config = get_config()
     config.delivery_system = TEST_DELIVERY_SYSTEM
-    config.disk_delivery_system_directory = TEST_DIGESTS_DIR
+    config.file_delivery_system_directory = TEST_DIGESTS_DIR
     with patch("echopages.config.config", config):
         yield
     if os.path.exists(TEST_DIGESTS_DIR):

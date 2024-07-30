@@ -14,9 +14,9 @@ def get_unit_of_work() -> UnitOfWork:
 def get_digest_delivery_system() -> DigestDeliverySystem:
     """Get the digest delivery system based on the configuration."""
     config = echopages.config.get_config()
-    if config.delivery_system == "DiskDigestDeliverySystem":
-        return delivery_system.DiskDigestDeliverySystem(
-            config.disk_delivery_system_directory
+    if config.delivery_system == "FileDigestDeliverySystem":
+        return delivery_system.FileDigestDeliverySystem(
+            config.file_delivery_system_directory
         )
 
     if config.delivery_system == "PostmarkDigestDeliverySystem":

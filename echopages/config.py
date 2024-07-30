@@ -15,8 +15,8 @@ class Config(BaseSettings):
     # Delivery system to use
     delivery_system: str = "PostmarkDigestDeliverySystem"
 
-    # Directory for digests if using the DiskDigestDeliverySystem
-    disk_delivery_system_directory: str = "data/digests"
+    # Directory for digests if using the FileDigestDeliverySystem
+    file_delivery_system_directory: str = "data/digests"
 
     # Recipient email address
     recipient_email: str = "recipient@echopages.com"

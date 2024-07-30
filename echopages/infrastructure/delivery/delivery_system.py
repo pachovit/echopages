@@ -94,7 +94,7 @@ class PostmarkDigestDeliverySystem(DigestDeliverySystem):
         logger.info(f"Sent digest to {self.recipient_email}")
 
 
-class DiskDigestDeliverySystem(DigestDeliverySystem):
+class FileDigestDeliverySystem(DigestDeliverySystem):
     """Delivers a digest to disk as an HTML file."""
 
     def __init__(self, directory: str) -> None:
