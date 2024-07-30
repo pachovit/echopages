@@ -1,9 +1,4 @@
-FROM python:3.9-slim
-
-# Install Poetry
-RUN apt-get update && apt-get install -y curl && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
-    ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+FROM cimg/python:3.9
 
 # Set working directory
 WORKDIR /app
