@@ -20,11 +20,6 @@ jobs:
       image: cimg/python:3.9
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          apt-get update && apt-get install -y curl && \
-          curl -sSL https://install.python-poetry.org | python3 - && \
-          ln -s /github/home/.local/bin/poetry /usr/local/bin/poetry
       - name: Configure Poetry
         run: poetry config virtualenvs.create false && poetry install
       - name: Run tests

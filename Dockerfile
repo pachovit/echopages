@@ -12,4 +12,4 @@ RUN poetry config virtualenvs.create false && poetry install --no-dev
 # Copy the rest of the application code
 COPY echopages echopages
 
-CMD ["poetry", "run", "python3", "-m", "echopages.main"]
+CMD ["python3", "-m", "echopages.main"]
