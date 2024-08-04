@@ -1,13 +1,10 @@
-from datetime import datetime
-
 from fastapi import Depends, FastAPI, HTTPException, status
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 import echopages.config
 from echopages import bootstrap
 from echopages.application import services
 from echopages.domain import model, repositories
-from echopages.infrastructure.delivery import schedulers
 
 app = FastAPI(
     title="EchoPages API",
@@ -109,7 +106,6 @@ async def trigger_digest(
     digest_title, digest_content_str = services.delivery_service(
         uow,
         content_sampler,
-        trigger_digest_request.n_units,
         digest_formatter,
         digest_delivery_system,
     )
@@ -119,45 +115,41 @@ async def trigger_digest(
     )
 
 
-class Schedule(BaseModel):
-    time_of_day: str = Field(
-        ...,
-        description=(
-            "The time of day at which the digest should "
-            "be generated, in format HH:MM."
-        ),
-        examples=["07:00", "15:30"],
+class DigestConfig(BaseModel):
+    number_of_units_per_digest: int = Field(
+        1, description="The number of units to include in the digest."
+    )
+    daily_time_of_digest: str = Field(
+        "07:00",
+        description="Time of day to send the daily digest, in the format HH:MM.",
     )
 
-    @field_validator("time_of_day")
-    def check_time_format(cls, v: str) -> str:
-        datetime.strptime(v, "%H:%M")
-        return v
 
-
-class ConfigureScheduleResponse(BaseModel):
-    message: str = "Schedule updated"
+@app.get(
+    "/get_config",
+    response_model=DigestConfig,
+    summary="Get current digest configuration.",
+)
+async def get_config() -> DigestConfig:
+    config = echopages.config.get_config()
+    return DigestConfig(**config.model_dump())
 
 
 @app.post(
-    "/configure_schedule",
-    response_model=ConfigureScheduleResponse,
-    summary="Configure schedule parameters",
+    "/set_config",
+    status_code=status.HTTP_201_CREATED,
+    summary="Update the digest configuration",
 )
-async def configure_schedule(
-    schedule: Schedule,
-    uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
-) -> ConfigureScheduleResponse:
-    content_sampler = bootstrap.get_sampler()
-    config = echopages.config.get_config()
-    scheduler = schedulers.SimpleScheduler(
-        lambda: services.generate_digest(
-            uow,
-            content_sampler,
-            config.number_of_units_per_digest,
-        )
+async def set_config(
+    requested_config: DigestConfig,
+) -> None:
+    scheduler = bootstrap.get_scheduler()
+
+    number_of_units_per_digest = requested_config.number_of_units_per_digest
+    daily_time_of_digest = requested_config.daily_time_of_digest
+
+    services.update_digest_config(
+        scheduler, number_of_units_per_digest, daily_time_of_digest
     )
 
-    services.configure_schedule(scheduler, schedule.time_of_day)
-
-    return ConfigureScheduleResponse()
+    return None

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from time import sleep
 from typing import Dict, List
-
+import echopages.config
 from time_machine import travel
 from zoneinfo import ZoneInfo
 
@@ -207,11 +207,11 @@ def test_trigger_digest() -> None:
         services.add_content(uow, content)
 
     # When: A digest with 3 contents is triggered
-    n_samples = 3
+    echopages.config.get_config().number_of_units_per_digest = 3
+
     _, digest_content_str = services.delivery_service(
         uow,
         content_sampler,
-        n_samples,
         digest_formatter,
         delivery_system,
     )
@@ -237,6 +237,7 @@ def test_all_flow() -> None:
     services.add_content(uow, sample_content_data(2))
 
     assert len(uow.digest_repo.get_all()) == 0
+    echopages.config.get_config().number_of_units_per_digest = 1
 
     # Let the scheduler do 4 deliveries
     with travel(
@@ -248,7 +249,6 @@ def test_all_flow() -> None:
             lambda: services.delivery_service(
                 uow,
                 content_sampler,
-                1,
                 digest_formatter,
                 delivery_system,
             ),
