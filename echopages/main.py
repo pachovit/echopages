@@ -7,14 +7,14 @@ import echopages.bootstrap as bootstrap
 import echopages.config
 from echopages.api import endpoints
 
-
 logger = logging.getLogger(__name__)
 
 
 def configure_logging() -> None:
     """Configure the logger to log info messages."""
+    log_level = logging.getLevelName(echopages.config.get_config().log_level)
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+        level=log_level, format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
 

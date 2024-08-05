@@ -1,7 +1,10 @@
+import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-from echopages.domain import model, repositories
 import echopages.config
+from echopages.domain import model, repositories
+
+logger = logging.getLogger(__name__)
 
 
 def add_content(
@@ -20,6 +23,7 @@ def add_content(
     Raises:
         None.
     """
+    logger.info("Adding content")
     with uow:
         content = model.Content(id=None, **content_data)
         content_id = uow.content_repo.add(content)
@@ -31,6 +35,7 @@ def get_content_by_id(
     uow: repositories.UnitOfWork,
     content_id: int,
 ) -> Optional[Dict[str, Any]]:
+    logger.debug(f"Getting content {content_id} by ID")
     with uow:
         content = uow.content_repo.get_by_id(content_id)
 
@@ -49,6 +54,12 @@ def sample_contents(
     content_sampler: model.ContentSampler,
     number_of_units: int,
 ) -> List[model.Content]:
+    logger.debug(
+        (
+            f"Using sampler {content_sampler.__class__.__name__} to "
+            f"sample '{number_of_units}' content units"
+        )
+    )
     with uow:
         contents = uow.content_repo.get_all()
         digests = uow.digest_repo.get_all()
@@ -60,6 +71,7 @@ def generate_digest(
     content_sampler: model.ContentSampler,
     number_of_units: int,
 ) -> int:
+    logger.debug(f"Generating a digest of {number_of_units} content units")
     contents = sample_contents(uow, content_sampler, number_of_units)
 
     content_ids = [c.id for c in contents]
@@ -78,6 +90,7 @@ def deliver_digest(
     digest_id: int,
     digest_repr: model.DigestRepr,
 ) -> None:
+    logger.debug(f"Delivering digest of id {digest_id}, and title {digest_repr.title}")
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
         assert digest is not None
@@ -93,6 +106,7 @@ def format_digest(
     digest_formatter: model.DigestFormatter,
     digest_id: int,
 ) -> Tuple[model.DigestTitle, model.DigestContentStr]:
+    logger.debug(f"Formatting digest of id {digest_id}")
     with uow:
         digest = uow.digest_repo.get_by_id(digest_id)
         assert digest is not None
@@ -114,6 +128,13 @@ def delivery_service(
     digest_formatter: model.DigestFormatter,
     digest_delivery_system: model.DigestDeliverySystem,
 ) -> Tuple[model.DigestTitle, model.DigestContentStr]:
+    logger.info(
+        (
+            f"Triggering a digest delivery, with sampler {content_sampler}",
+            f"formatter {digest_formatter} and delivery {digest_delivery_system}",
+        )
+    )
+
     with uow:
         number_of_units = echopages.config.get_config().number_of_units_per_digest
 
@@ -137,7 +158,13 @@ def update_digest_config(
     number_of_units_per_digest: int,
     daily_time_of_digest: str,
 ) -> None:
-
+    logger.info(
+        (
+            "Updating digest config with "
+            f"number_of_units_per_digest={number_of_units_per_digest}, "
+            f"daily_time_of_digest={daily_time_of_digest}"
+        )
+    )
     config = echopages.config.get_config()
     config.number_of_units_per_digest = number_of_units_per_digest
     config.daily_time_of_digest = daily_time_of_digest

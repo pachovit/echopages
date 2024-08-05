@@ -142,3 +142,4 @@ cython_debug/
 # testing databases
 *.db
 digests/
+config.json

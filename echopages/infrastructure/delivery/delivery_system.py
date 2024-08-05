@@ -110,3 +110,4 @@ class FileDigestDeliverySystem(DigestDeliverySystem):
         file_path = os.path.join(self.directory, filename)
         with open(file_path, "w") as file:
             file.write(digest_repr.contents_str)
+        logger.info(f"Saved digest of title '{digest_repr.title}' to {file_path}")

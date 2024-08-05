@@ -1,18 +1,17 @@
+import json
+import logging
 import os
 from datetime import datetime
+from pathlib import Path
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
-from pathlib import Path
-import json
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 class Config(BaseSettings):
-
+    log_level: str = "INFO"
     config_file_path: str = "data/config.json"
 
     # API settings
@@ -73,7 +72,7 @@ def get_config() -> Config:
             (
                 f"Unexisting config file {config.config_file_path}. "
                 "Configuration will be read from the environment"
-                "and written to the file."
+                "and written to the file"
             )
         )
         write_config(config)

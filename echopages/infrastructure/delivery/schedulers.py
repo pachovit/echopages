@@ -1,3 +1,4 @@
+import logging
 from threading import Thread
 from time import sleep
 from typing import Any, Callable, Optional
@@ -5,6 +6,8 @@ from typing import Any, Callable, Optional
 import schedule
 
 from echopages.domain import model
+
+logger = logging.getLogger(__name__)
 
 
 class SimpleScheduler(model.Scheduler):
@@ -26,6 +29,7 @@ class SimpleScheduler(model.Scheduler):
         self.configure_schedule(time_of_day)
 
     def configure_schedule(self, time_of_day: str) -> None:
+        logger.info(f"Configuring schedule for {time_of_day}")
         self.time_of_day = time_of_day
 
         was_running = self.continue_running
