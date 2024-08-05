@@ -12,6 +12,7 @@ services:
       - RECIPIENT_EMAIL=${RECIPIENT_EMAIL}
       - NUMBER_OF_UNITS_PER_DIGEST=${NUMBER_OF_UNITS_PER_DIGEST}
       - DAILY_TIME_OF_DIGEST=${DAILY_TIME_OF_DIGEST}
+    user: "${UID}:${GID}"
     volumes:
       - /echopages/data:/app/data
     restart: always
