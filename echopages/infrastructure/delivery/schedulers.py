@@ -22,12 +22,21 @@ class SimpleScheduler(model.Scheduler):
         self.function = function
         self.time_zone = time_zone
         self.sleep_interval = sleep_interval
+        self.continue_running = False
         self.configure_schedule(time_of_day)
 
     def configure_schedule(self, time_of_day: str) -> None:
         self.time_of_day = time_of_day
+
+        was_running = self.continue_running
+        if was_running:
+            self.stop()
+
         schedule.clear()
         schedule.every().day.at(time_of_day, self.time_zone).do(self.function)
+
+        if was_running:
+            self.start()
 
     def start(self) -> None:
         self.continue_running = True

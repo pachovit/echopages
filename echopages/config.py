@@ -1,10 +1,20 @@
+import os
 from datetime import datetime
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
+from pathlib import Path
+import json
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Config(BaseSettings):
+
+    config_file_path: str = "data/config.json"
+
     # API settings
     api_host: str = "0.0.0.0"
     api_port: int = 8000
@@ -43,7 +53,34 @@ config = None
 
 def get_config() -> Config:
     """Returns a singleton configuration object."""
+
     global config
-    if config is None:
-        config = Config()
+
+    # If config already defined in memory, nothing else is needed
+    if config is not None:
+        return config
+
+    # Load initial configuration from the environment and defaults
+    config = Config()
+
+    # If config file exists, take config from the file
+    if Path(config.config_file_path).exists():
+        with open(config.config_file_path, "r") as file:
+            config_data = json.load(file)
+            config = Config(**config_data)
+    else:
+        logger.warning(
+            (
+                f"Unexisting config file {config.config_file_path}. "
+                "Configuration will be read from the environment"
+                "and written to the file."
+            )
+        )
+        write_config(config)
     return config
+
+
+def write_config(cfg: Config) -> None:
+    os.makedirs(os.path.dirname(cfg.config_file_path), exist_ok=True)
+    with open(cfg.config_file_path, "w") as file:
+        json.dump(cfg.model_dump(), file, indent=2)

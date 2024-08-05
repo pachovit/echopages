@@ -1,8 +1,10 @@
 import echopages.config
-from echopages.domain.model import DigestDeliverySystem, DigestFormatter
+from echopages.domain.model import DigestDeliverySystem, DigestFormatter, Scheduler
 from echopages.domain.repositories import UnitOfWork
 from echopages.infrastructure.database.file_db import FileUnitOfWork
 from echopages.infrastructure.delivery import delivery_system, samplers
+from echopages.infrastructure.delivery import schedulers
+from echopages.application import services
 
 
 def get_unit_of_work() -> UnitOfWork:
@@ -32,3 +34,29 @@ def get_sampler() -> samplers.SimpleContentSampler:
 def get_digest_formatter() -> DigestFormatter:
     """Get the digest formatter based on the configuration."""
     return delivery_system.HTMLDigestFormatter()
+
+
+scheduler = None
+
+
+def get_scheduler() -> Scheduler:
+    global scheduler
+    if scheduler is not None:
+        return scheduler
+    # TODO: This should be outside
+    uow = get_unit_of_work()
+    digest_formatter = get_digest_formatter()
+    digest_delivery_system = get_digest_delivery_system()
+    content_sampler = get_sampler()
+    config = echopages.config.get_config()
+
+    scheduler = schedulers.SimpleScheduler(
+        lambda: services.delivery_service(
+            uow,
+            content_sampler,
+            digest_formatter,
+            digest_delivery_system,
+        ),
+        time_of_day=config.daily_time_of_digest,
+    )
+    return scheduler

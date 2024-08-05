@@ -1,5 +1,6 @@
 import glob
 from typing import Dict
+import echopages.config
 
 from echopages.application import services
 from echopages.bootstrap import (
@@ -40,11 +41,10 @@ def test_trigger_digest() -> None:
         assert len(uow.content_repo.get_all()) == 3
 
     # When: A digest with 3 contents is triggered
-    n_samples = 3
+    echopages.config.get_config().number_of_units_per_digest = 3
     services.delivery_service(
         uow,
         content_sampler,
-        n_samples,
         digest_formatter,
         delivery_system,
     )

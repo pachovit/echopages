@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 from echopages.domain import model, repositories
+import echopages.config
 
 
 def add_content(
@@ -110,11 +111,12 @@ def format_digest(
 def delivery_service(
     uow: repositories.UnitOfWork,
     content_sampler: model.ContentSampler,
-    number_of_units: int,
     digest_formatter: model.DigestFormatter,
     digest_delivery_system: model.DigestDeliverySystem,
 ) -> Tuple[model.DigestTitle, model.DigestContentStr]:
     with uow:
+        number_of_units = echopages.config.get_config().number_of_units_per_digest
+
         digest_id = generate_digest(uow, content_sampler, number_of_units)
 
         digest_title, digest_content_str = format_digest(
@@ -128,3 +130,16 @@ def delivery_service(
         )
 
     return digest_title, digest_content_str
+
+
+def update_digest_config(
+    scheduler: model.Scheduler,
+    number_of_units_per_digest: int,
+    daily_time_of_digest: str,
+) -> None:
+
+    config = echopages.config.get_config()
+    config.number_of_units_per_digest = number_of_units_per_digest
+    config.daily_time_of_digest = daily_time_of_digest
+    echopages.config.write_config(config)
+    scheduler.configure_schedule(daily_time_of_digest)
