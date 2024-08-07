@@ -53,10 +53,12 @@ class HTMLDigestFormatter(DigestFormatter):
         now = datetime.now()
         current_date = now.strftime("%B %d, %Y")  # Format: Month Day, Year
         current_year = now.year
-        text = template.render(
-            contents=contents_to_render,
-            current_date=current_date,
-            current_year=current_year,
+        text = str(
+            template.render(
+                contents=contents_to_render,
+                current_date=current_date,
+                current_year=current_year,
+            )
         )
         return text
 
