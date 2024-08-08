@@ -60,8 +60,8 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER }}
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:/echopages/docker-compose.yml
-          scp -o StrictHostKeyChecking=no production.env $DEPLOY_USER@$DEPLOY_SERVER:/echopages/production.env
+          scp -o StrictHostKeyChecking=no docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:~/echopages/docker-compose.yml
+          scp -o StrictHostKeyChecking=no production.env $DEPLOY_USER@$DEPLOY_SERVER:~/echopages/production.env
       - name: Deploy to server
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
@@ -70,8 +70,8 @@ jobs:
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
         run: |
           ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
-            echo 'POSTMARK_SERVER_API_TOKEN=${{ secrets.POSTMARK_SERVER_API_TOKEN }}' >> /echopages/production.env;
-            echo 'RECIPIENT_EMAIL=${{ secrets.RECIPIENT_EMAIL }}' >> /echopages/production.env;
+            echo 'POSTMARK_SERVER_API_TOKEN=${{ secrets.POSTMARK_SERVER_API_TOKEN }}' >> ~/echopages/production.env;
+            echo 'RECIPIENT_EMAIL=${{ secrets.RECIPIENT_EMAIL }}' >> ~/echopages/production.env;
             docker pull pachovit/echopages:latest;
-            docker compose -f /echopages/docker-compose.yml --env-file /echopages/production.env up -d;
+            docker compose -f ~/echopages/docker-compose.yml --env-file ~/echopages/production.env up -d;
           "

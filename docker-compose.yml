@@ -15,5 +15,5 @@ services:
       - DAILY_TIME_OF_DIGEST=${DAILY_TIME_OF_DIGEST}
     user: "${UID}:${GID}"
     volumes:
-      - /echopages/data:/app/data
+      - /mnt/db:/app/data # Local path where the data will be stored
     restart: always
