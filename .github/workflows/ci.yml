@@ -60,6 +60,9 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER }}
         run: |
+          ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
+            mkdir -p ~/echopages
+          "
           scp -o StrictHostKeyChecking=no docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:~/echopages/docker-compose.yml
           scp -o StrictHostKeyChecking=no production.env $DEPLOY_USER@$DEPLOY_SERVER:~/echopages/production.env
       - name: Deploy to server
