@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   echopages:
     image: pachovit/echopages:latest
