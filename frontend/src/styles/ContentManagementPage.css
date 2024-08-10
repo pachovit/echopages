@@ -1,0 +1,61 @@
+/* Path: frontend/src/styles/ContentManagementPage.css */
+
+.content-management-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.filters {
+    margin-bottom: 20px;
+}
+
+.filters input {
+    padding: 10px;
+    margin: 0 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 200px;
+}
+
+.accordion {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.accordion-item {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f4f4f4;
+    cursor: pointer;
+}
+
+.accordion-header-info {
+    font-size: 1rem;
+    color: #333;
+}
+
+.accordion-toggle {
+    font-size: 1.2rem;
+    color: #007bff;
+}
+
+.accordion-content {
+    padding: 15px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+}
+
+.accordion-content p {
+    margin: 0;
+}

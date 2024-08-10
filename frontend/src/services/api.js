@@ -11,6 +11,10 @@ export const addContent = async (data) => {
     });
   };
 
+export const getContent = () => {
+    return axios.get(`${API_BASE_URL}/contents`);
+};
+
 export const getConfig = () => {
     return axios.get(`${API_BASE_URL}/get_config`);
 };

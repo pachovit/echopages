@@ -10,7 +10,7 @@ coverage:
 	pre-commit run --all-files
 
 run:
-	PYTHONPATH=. python3 echopages/main.py
+	docker compose --env-file .env -f simple.docker-compose.yml up -d --build
 
 build-frontend:
 	cd echopages/frontend && npm install && npm run build && cd ../../

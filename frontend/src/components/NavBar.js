@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faHome, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faHome, faPlusCircle, faTable } from '@fortawesome/free-solid-svg-icons';
 import '../styles/NavBar.css';
 import logo from '../assets/logo.png'; // Adjust the path based on where you placed the logo
 
@@ -18,6 +18,12 @@ const NavBar = () => {
                     <Link to="/" className="navbar-link">
                         <FontAwesomeIcon icon={faHome} className="navbar-icon" />
                         Home
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/content-management" className="navbar-link">
+                        <FontAwesomeIcon icon={faTable} className="navbar-icon" />
+                        Content Management
                     </Link>
                 </li>
                 <li>
