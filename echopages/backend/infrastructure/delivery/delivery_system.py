@@ -8,8 +8,8 @@ import markdown
 from jinja2 import Template
 from postmarker.core import PostmarkClient
 
-from echopages.domain import model
-from echopages.domain.model import (
+from echopages.backend.domain import model
+from echopages.backend.domain.model import (
     Content,
     DigestContentStr,
     DigestDeliverySystem,
@@ -37,7 +37,7 @@ class HTMLDigestFormatter(DigestFormatter):
     def _build_digest_str(self, contents: List[Content]) -> str:
         """Builds the HTML content of the digest."""
         template_str = open(
-            "echopages/infrastructure/templates/digest_template.html"
+            "echopages/backend/infrastructure/templates/digest_template.html"
         ).read()
         template = Template(template_str)
 

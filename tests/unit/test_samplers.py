@@ -1,7 +1,7 @@
 from typing import List
 
-from echopages.domain import model
-from echopages.infrastructure.delivery import samplers
+from echopages.backend.domain import model
+from echopages.backend.infrastructure.delivery import samplers
 
 
 def test_simple_content_sampler_no_digests() -> None:

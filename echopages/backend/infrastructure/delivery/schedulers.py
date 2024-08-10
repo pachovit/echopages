@@ -5,7 +5,7 @@ from typing import Any, Callable, Optional
 
 import schedule
 
-from echopages.domain import model
+from echopages.backend.domain import model
 
 logger = logging.getLogger(__name__)
 

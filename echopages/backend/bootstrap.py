@@ -1,20 +1,28 @@
-import echopages.config
-from echopages.application import services
-from echopages.domain.model import DigestDeliverySystem, DigestFormatter, Scheduler
-from echopages.domain.repositories import UnitOfWork
-from echopages.infrastructure.database.file_db import FileUnitOfWork
-from echopages.infrastructure.delivery import delivery_system, samplers, schedulers
+import echopages.backend.config
+from echopages.backend.application import services
+from echopages.backend.domain.model import (
+    DigestDeliverySystem,
+    DigestFormatter,
+    Scheduler,
+)
+from echopages.backend.domain.repositories import UnitOfWork
+from echopages.backend.infrastructure.database.file_db import FileUnitOfWork
+from echopages.backend.infrastructure.delivery import (
+    delivery_system,
+    samplers,
+    schedulers,
+)
 
 
 def get_unit_of_work() -> UnitOfWork:
     """Get a unit of work for the application based on the configuration."""
-    config = echopages.config.get_config()
+    config = echopages.backend.config.get_config()
     return FileUnitOfWork(config.db_uri)
 
 
 def get_digest_delivery_system() -> DigestDeliverySystem:
     """Get the digest delivery system based on the configuration."""
-    config = echopages.config.get_config()
+    config = echopages.backend.config.get_config()
     if config.delivery_system == "FileDigestDeliverySystem":
         return delivery_system.FileDigestDeliverySystem(
             config.file_delivery_system_directory
@@ -47,7 +55,7 @@ def get_scheduler() -> Scheduler:
     digest_formatter = get_digest_formatter()
     digest_delivery_system = get_digest_delivery_system()
     content_sampler = get_sampler()
-    config = echopages.config.get_config()
+    config = echopages.backend.config.get_config()
 
     scheduler = schedulers.SimpleScheduler(
         lambda: services.delivery_service(

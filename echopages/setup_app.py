@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from echopages.api import endpoints as api_endpoints
+from echopages.backend.api import endpoints as api_endpoints
 
 # TODO: Move this to a config file
 FRONTEND_BUILD_DIR = "echopages/frontend/build"

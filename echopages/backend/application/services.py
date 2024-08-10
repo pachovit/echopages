@@ -1,8 +1,8 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-import echopages.config
-from echopages.domain import model, repositories
+import echopages.backend.config
+from echopages.backend.domain import model, repositories
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +136,9 @@ def delivery_service(
     )
 
     with uow:
-        number_of_units = echopages.config.get_config().number_of_units_per_digest
+        number_of_units = (
+            echopages.backend.config.get_config().number_of_units_per_digest
+        )
 
         digest_id = generate_digest(uow, content_sampler, number_of_units)
 
@@ -165,8 +167,8 @@ def update_digest_config(
             f"daily_time_of_digest={daily_time_of_digest}"
         )
     )
-    config = echopages.config.get_config()
+    config = echopages.backend.config.get_config()
     config.number_of_units_per_digest = number_of_units_per_digest
     config.daily_time_of_digest = daily_time_of_digest
-    echopages.config.write_config(config)
+    echopages.backend.config.write_config(config)
     scheduler.configure_schedule(daily_time_of_digest)

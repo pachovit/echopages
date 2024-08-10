@@ -1,6 +1,6 @@
 from typing import List
 
-from echopages.domain import model
+from echopages.backend.domain import model
 
 
 class SimpleContentSampler(model.ContentSampler):

@@ -1,15 +1,17 @@
 import glob
 from typing import Dict
 
-import echopages.config
-from echopages.application import services
-from echopages.bootstrap import (
+import echopages.backend.config
+from echopages.backend.application import services
+from echopages.backend.bootstrap import (
     get_digest_delivery_system,
     get_digest_formatter,
     get_sampler,
     get_unit_of_work,
 )
-from echopages.infrastructure.delivery.delivery_system import FileDigestDeliverySystem
+from echopages.backend.infrastructure.delivery.delivery_system import (
+    FileDigestDeliverySystem,
+)
 
 
 def sample_content_data(id: int) -> Dict[str, str]:
@@ -41,7 +43,7 @@ def test_trigger_digest() -> None:
         assert len(uow.content_repo.get_all()) == 3
 
     # When: A digest with 3 contents is triggered
-    echopages.config.get_config().number_of_units_per_digest = 3
+    echopages.backend.config.get_config().number_of_units_per_digest = 3
     services.delivery_service(
         uow,
         content_sampler,

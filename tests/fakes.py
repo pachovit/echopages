@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional, Tuple
 
-from echopages.domain import model, repositories
+from echopages.backend.domain import model, repositories
 
 logger = logging.getLogger(__name__)
 

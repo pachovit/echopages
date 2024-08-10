@@ -1,6 +1,6 @@
 import pytestarch
 
-SRC_DIR = "echopages.echopages"
+SRC_DIR = "echopages.echopages.backend"
 
 evaluable = pytestarch.get_evaluable_architecture(
     "../echopages", "../echopages/echopages"

@@ -4,8 +4,8 @@ import json
 import os
 from typing import List, Optional
 
-from echopages.domain import repositories
-from echopages.domain.model import Content, Digest
+from echopages.backend.domain import repositories
+from echopages.backend.domain.model import Content, Digest
 
 
 class FileContentRepository(repositories.ContentRepository):

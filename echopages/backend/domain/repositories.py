@@ -3,7 +3,7 @@ from __future__ import annotations
 import abc
 from typing import List, Optional
 
-from echopages.domain import model
+from echopages.backend.domain import model
 
 
 class ContentRepository(abc.ABC):

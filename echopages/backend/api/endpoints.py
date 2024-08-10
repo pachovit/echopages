@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
-import echopages.config
-from echopages import bootstrap
-from echopages.application import services
-from echopages.domain import model, repositories
+import echopages.backend.config
+from echopages.backend import bootstrap
+from echopages.backend.application import services
+from echopages.backend.domain import model, repositories
 
 api_router = APIRouter(prefix="/api")
 
@@ -127,7 +127,7 @@ class DigestConfig(BaseModel):
     summary="Get current digest configuration.",
 )
 async def get_config() -> DigestConfig:
-    config = echopages.config.get_config()
+    config = echopages.backend.config.get_config()
     return DigestConfig(**config.model_dump())
 
 

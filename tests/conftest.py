@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from echopages.config import get_config
+from echopages.backend.config import get_config
 
 TEST_DB_URI = "./test.db"
 TEST_CONFIG_FILE = "./test-config.json"
@@ -19,7 +19,7 @@ def clean_config_file() -> Generator[None, None, None]:
     if os.path.exists(config.config_file_path):
         os.remove(config.config_file_path)
     config.config_file_path = TEST_CONFIG_FILE
-    with patch("echopages.config.config", config):
+    with patch("echopages.backend.config.config", config):
         yield
 
     if os.path.exists(TEST_CONFIG_FILE):
@@ -30,7 +30,7 @@ def clean_config_file() -> Generator[None, None, None]:
 def dummy_db_uri() -> Generator[None, None, None]:
     config = get_config()
     config.db_uri = TEST_DB_URI
-    with patch("echopages.config.config", config):
+    with patch("echopages.backend.config.config", config):
         yield
 
     if os.path.exists(TEST_DB_URI):
@@ -42,7 +42,7 @@ def fake_delivery_system() -> Generator[None, None, None]:
     config = get_config()
     config.delivery_system = TEST_DELIVERY_SYSTEM
     config.file_delivery_system_directory = TEST_DIGESTS_DIR
-    with patch("echopages.config.config", config):
+    with patch("echopages.backend.config.config", config):
         yield
     if os.path.exists(TEST_DIGESTS_DIR):
         shutil.rmtree(TEST_DIGESTS_DIR)

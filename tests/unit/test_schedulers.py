@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from time_machine import travel
 from zoneinfo import ZoneInfo
 
-from echopages.infrastructure.delivery import schedulers
+from echopages.backend.infrastructure.delivery import schedulers
 
 
 class DummyClass:
