@@ -9,7 +9,9 @@ const NavBar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-logo">
-                <img src={logo} alt="EchoPages Logo" className="navbar-logo-img" />
+                <Link to="/">
+                    <img src={logo} alt="EchoPages Logo" className="navbar-logo-img" />
+                </Link>
             </div>
             <ul className="navbar-links">
                 <li>

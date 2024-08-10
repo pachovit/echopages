@@ -7,7 +7,6 @@ const AddContentPage = () => {
         <div>
             <NavBar />
             <div className="page-content">
-                <h1>Add New Content</h1>
                 <AddContentForm />
             </div>
         </div>

@@ -2,6 +2,8 @@ services:
   echopages:
     image: pachovit/echopages:latest
     container_name: echopages
+    build:
+      context: .
     ports:
       - "8000:8000"
     environment:

@@ -7,7 +7,6 @@ const ConfigPage = () => {
         <div>
             <NavBar />
             <div className="page-content">
-                <h1>Digest Configuration</h1>
                 <DigestConfigForm />
             </div>
         </div>
