@@ -12,6 +12,8 @@ on:
       - "Dockerfile"
       - "docker-compose.yml"
       - "production.env"
+      - "frontend/**"
+      - ".github/workflows/ci.yml"
 
 jobs:
   test:
