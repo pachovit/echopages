@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from time import sleep
 from typing import Dict, List
-import echopages.config
+
 from time_machine import travel
 from zoneinfo import ZoneInfo
 
+import echopages.config
 from echopages.application import services
 from echopages.domain import model
 from echopages.infrastructure.delivery import samplers, schedulers

@@ -1,15 +1,28 @@
-FROM cimg/python:3.9
+# Stage 1: Build React app
+FROM node:18-alpine AS build-frontend
+WORKDIR /app
+COPY echopages/frontend/package*.json ./
+RUN npm install
+COPY echopages/frontend/ ./
+RUN npm run build
 
-# Set working directory
+# Stage 2: Build Backend
+FROM python:3.9-slim AS build-backend
 WORKDIR /app
 
-# Copy only the necessary files first for dependency installation
+# Install Poetry
+RUN apt-get update && apt-get install -y curl && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    apt-get purge -y --auto-remove curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set PATH for poetry
+ENV PATH="/root/.local/bin:$PATH"
+
 COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
-# Install dependencies
-RUN poetry config virtualenvs.create false && poetry install --no-dev
-
-# Copy the rest of the application code
 COPY echopages echopages
+COPY --from=build-frontend /app/build echopages/frontend/build
 
 CMD ["python3", "-m", "echopages.main"]

@@ -1,10 +1,9 @@
 import echopages.config
+from echopages.application import services
 from echopages.domain.model import DigestDeliverySystem, DigestFormatter, Scheduler
 from echopages.domain.repositories import UnitOfWork
 from echopages.infrastructure.database.file_db import FileUnitOfWork
-from echopages.infrastructure.delivery import delivery_system, samplers
-from echopages.infrastructure.delivery import schedulers
-from echopages.application import services
+from echopages.infrastructure.delivery import delivery_system, samplers, schedulers
 
 
 def get_unit_of_work() -> UnitOfWork:

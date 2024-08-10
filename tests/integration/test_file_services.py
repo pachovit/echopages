@@ -1,7 +1,7 @@
 import glob
 from typing import Dict
-import echopages.config
 
+import echopages.config
 from echopages.application import services
 from echopages.bootstrap import (
     get_digest_delivery_system,
