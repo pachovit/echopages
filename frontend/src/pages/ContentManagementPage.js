@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { getContent } from '../services/api';
 import ReactMarkdown from 'react-markdown';
@@ -15,8 +16,9 @@ const ContentManagementPage = () => {
         const fetchContent = async () => {
             try {
                 const response = await getContent();
-                setContent(response.data);
-                setFilteredContent(response.data);
+                const sortedContent = response.data.sort((a, b) => b.id - a.id); // Sort by ID in reverse order
+                setContent(sortedContent);
+                setFilteredContent(sortedContent);
             } catch (error) {
                 console.error('Error fetching content:', error);
                 alert('Failed to load content.');
@@ -70,6 +72,9 @@ const ContentManagementPage = () => {
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e.target.value)}
                     />
+                    <Link to="/add-content" className="add-content-button">
+                        Add New Content
+                    </Link>
                 </div>
                 <div className="content-list">
                     {filteredContent.length > 0 ? (
@@ -78,7 +83,10 @@ const ContentManagementPage = () => {
                                 <div key={index} className="accordion-item">
                                     <div className="accordion-header" onClick={() => toggleExpand(index)}>
                                         <div className="accordion-header-info">
-                                            <strong>{item.source || '(No source)'} ({item.author || 'No author'}) - {item.location || '(No location)'}</strong>: <em>{getSampleText(item.text)}</em>
+                                            <strong>
+                                                {item.source || '(No source)'} ({item.author || 'No author'}) - {item.location || '(No location)'}
+                                            </strong>: 
+                                            <em>{getSampleText(item.text)}</em>
                                         </div>
                                         <div className="accordion-toggle">
                                             {expandedItem === index ? '▲' : '▼'}

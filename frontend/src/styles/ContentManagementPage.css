@@ -2,10 +2,14 @@
 
 .content-management-container {
     padding: 20px;
+    background-color: #f4f4f4; /* Light gray background */
     text-align: center;
 }
 
 .filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -18,6 +22,23 @@
     width: 200px;
 }
 
+.add-content-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.add-content-button:hover {
+    background-color: #0056b3;
+}
+
 .accordion {
     width: 100%;
     max-width: 800px;
@@ -25,6 +46,7 @@
 }
 
 .accordion-item {
+    background-color: white; /* White background for the closed cards */
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 10px;
@@ -36,8 +58,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background-color: #f4f4f4;
+    background-color: white; /* White background for the closed cards */
     cursor: pointer;
+    border-bottom: 1px solid #ddd;
 }
 
 .accordion-header-info {
@@ -52,10 +75,17 @@
 
 .accordion-content {
     padding: 15px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
+    background-color: #f9f9f9; /* Slightly darker gray for the open card content */
+    text-align: left; /* Ensure left alignment */
 }
 
-.accordion-content p {
+.accordion-content p, 
+.accordion-content h1, 
+.accordion-content h2, 
+.accordion-content h3, 
+.accordion-content h4, 
+.accordion-content h5, 
+.accordion-content h6 {
     margin: 0;
+    text-align: left; /* Ensure left alignment for all text elements */
 }
