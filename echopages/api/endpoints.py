@@ -1,5 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 import echopages.config
@@ -7,19 +6,7 @@ from echopages import bootstrap
 from echopages.application import services
 from echopages.domain import model, repositories
 
-app = FastAPI(
-    title="EchoPages API",
-    description="Read, Repeat, Retain.",
-    version="0.1.0",
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+api_router = APIRouter(prefix="/api")
 
 
 class AddContentRequest(BaseModel):
@@ -54,7 +41,7 @@ class GetContentResponse(BaseModel):
     text: str
 
 
-@app.post(
+@api_router.post(
     "/add_content",
     status_code=status.HTTP_201_CREATED,
     response_model=AddContentResponse,
@@ -71,7 +58,7 @@ async def add_content(
     return AddContentResponse(content_id=content_id)
 
 
-@app.get(
+@api_router.get(
     "/contents/{content_id}",
     response_model=GetContentResponse,
     summary="Get content by ID",
@@ -97,7 +84,7 @@ class TriggerDigestResponse(BaseModel):
     digest_content_str: str
 
 
-@app.post(
+@api_router.post(
     "/trigger_digest",
     response_model=TriggerDigestResponse,
     summary="Trigger a digest generation and delivery",
@@ -134,7 +121,7 @@ class DigestConfig(BaseModel):
     )
 
 
-@app.get(
+@api_router.get(
     "/get_config",
     response_model=DigestConfig,
     summary="Get current digest configuration.",
@@ -144,7 +131,7 @@ async def get_config() -> DigestConfig:
     return DigestConfig(**config.model_dump())
 
 
-@app.post(
+@api_router.post(
     "/set_config",
     status_code=status.HTTP_201_CREATED,
     summary="Update the digest configuration",

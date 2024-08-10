@@ -71,7 +71,7 @@ def get_config() -> Config:
         logger.warning(
             (
                 f"Unexisting config file {config.config_file_path}. "
-                "Configuration will be read from the environment"
+                "Configuration will be read from the environment "
                 "and written to the file"
             )
         )

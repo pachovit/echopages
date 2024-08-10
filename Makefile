@@ -11,3 +11,6 @@ coverage:
 
 run:
 	PYTHONPATH=. python3 echopages/main.py
+
+build:
+	cd echopages/frontend && npm install && npm run build && cd ../../

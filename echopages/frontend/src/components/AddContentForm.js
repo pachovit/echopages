@@ -10,17 +10,25 @@ const AddContentForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        // Ensure text is filled out
+        if (!text.trim()) {
+            alert('Text field is required.');
+            return; // Stop form submission if text is empty
+        }
+
+        // Prepare the data with empty strings for optional fields
         const data = {
-            source: source.trim() || null,
-            author: author.trim() || null,
-            location: location.trim() || null,
+            source: source.trim(),
+            author: author.trim(),
+            location: location.trim(),
             text: text.trim(),
         };
 
         try {
             await addContent(data);
             alert('Content added successfully!');
+            // Reset form fields after successful submission
             setSource(''); setAuthor(''); setLocation(''); setText('');
         } catch (error) {
             alert('Failed to add content.');
@@ -57,11 +65,12 @@ const AddContentForm = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Text:</label>
+                        <label>Text: <span className="required">*</span></label>
                         <textarea
                             value={text}
                             onChange={(e) => setText(e.target.value)}
                             placeholder="Enter the content text"
+                            required
                         />
                     </div>
                     <button type="submit" className="submit-button">

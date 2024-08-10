@@ -11,6 +11,7 @@ const DigestConfigForm = () => {
         const fetchConfig = async () => {
             try {
                 const response = await getConfig();
+                console.info('Fetched configuration:', response.data);
                 setNumberOfUnits(response.data.number_of_units_per_digest);
                 setDailyTime(response.data.daily_time_of_digest);
             } catch (error) {

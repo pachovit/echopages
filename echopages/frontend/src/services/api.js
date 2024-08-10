@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000'; // Replace with your backend URL
+const API_BASE_URL = '/api';
 
 export const addContent = async (data) => {
+    console.info('Adding content:', data);
     return axios.post(`${API_BASE_URL}/add_content`, data, {
       headers: {
         'Content-Type': 'application/json',
