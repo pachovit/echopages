@@ -4,8 +4,9 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from pytest_bdd import given, parsers, scenario, then, when
 
-from echopages.main import app
+from echopages.setup_app import create_app
 
+app = create_app(frontend=False)
 client = TestClient(app)
 
 

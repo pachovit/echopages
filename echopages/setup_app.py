@@ -36,11 +36,12 @@ def configure_backend(app: FastAPI) -> None:
     app.include_router(api_endpoints.api_router)
 
 
-def create_app() -> FastAPI:
+def create_app(frontend: bool = True) -> FastAPI:
     """Create and configure the FastAPI app."""
     app = FastAPI(title="EchoPages", description="Read, Repeat, Retain.")
 
     configure_backend(app)
-    configure_frontend(app)
+    if frontend:
+        configure_frontend(app)
 
     return app
