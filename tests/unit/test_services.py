@@ -86,6 +86,24 @@ def test_user_can_get_contents() -> None:
     assert saved_content == content_data
 
 
+def test_user_can_get_all_contents() -> None:
+    uow = FakeUnitOfWork()
+    all_sent_content = []
+    for i in range(3):
+        content_data = sample_content_data(i)
+        services.add_content(uow, content_data)
+        all_sent_content.append(content_data)
+
+    all_saved_content = services.get_all_content(uow)
+
+    assert all_saved_content is not None
+    assert len(all_saved_content) == len(all_sent_content)
+    for saved_content in all_saved_content:
+        content_id = saved_content.pop("id")
+        assert content_id is not None
+        assert saved_content in all_sent_content
+
+
 def test_configure_schedule() -> None:
     # Given: Some schedule
     scheduler = schedulers.SimpleScheduler(lambda: None)

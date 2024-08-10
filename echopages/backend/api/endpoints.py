@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
@@ -35,6 +37,7 @@ class AddContentResponse(BaseModel):
 
 
 class GetContentResponse(BaseModel):
+    id: int
     source: str
     author: str
     location: str
@@ -73,6 +76,21 @@ async def get_content(
         raise HTTPException(status_code=404, detail="Content Not Found")
     else:
         return GetContentResponse(**content_data)
+
+
+@api_router.get(
+    "/contents",
+    response_model=List[GetContentResponse],
+    summary="Get all content",
+)
+async def get_all_content(
+    uow: repositories.UnitOfWork = Depends(bootstrap.get_unit_of_work),
+) -> List[GetContentResponse]:
+    all_content_data = services.get_all_content(uow)
+    if all_content_data is None:
+        raise HTTPException(status_code=404, detail="Content Not Found")
+    else:
+        return [GetContentResponse(**content_data) for content_data in all_content_data]
 
 
 class TriggerDigest(BaseModel):

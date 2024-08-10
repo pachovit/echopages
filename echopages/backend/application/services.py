@@ -45,6 +45,21 @@ def get_content_by_id(
     return content_data
 
 
+def get_all_content(
+    uow: repositories.UnitOfWork,
+) -> Optional[List[Dict[str, Any]]]:
+    logger.debug("Getting all content")
+    with uow:
+        content = uow.content_repo.get_all()
+
+        if content is None:
+            return None
+
+        all_content_data = [c.__dict__ for c in content]
+
+    return all_content_data
+
+
 def configure_schedule(scheduler: model.Scheduler, time_of_day: str) -> None:
     scheduler.configure_schedule(time_of_day)
 
