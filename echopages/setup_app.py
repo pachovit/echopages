@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from echopages.backend.api import endpoints as api_endpoints
 
 # TODO: Move this to a config file
-FRONTEND_BUILD_DIR = "echopages/frontend/build"
+FRONTEND_BUILD_DIR = "frontend/build"
 
 
 def configure_frontend(app: FastAPI) -> None:

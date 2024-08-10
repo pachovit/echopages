@@ -1,6 +1,7 @@
 services:
   echopages:
     image: pachovit/echopages:latest
+    container_name: echopages
     ports:
       - "8000:8000"
     environment:
@@ -13,5 +14,5 @@ services:
       - DAILY_TIME_OF_DIGEST=${DAILY_TIME_OF_DIGEST}
     user: "${UID}:${GID}"
     volumes:
-      - /mnt/db:/app/data # Local path where the data will be stored
+      - ${ECHOPAGES_DATA_DIR}:/app/data # Local path where the data will be stored
     restart: always

@@ -1,9 +1,9 @@
 # Stage 1: Build React app
 FROM node:18-alpine AS build-frontend
 WORKDIR /app
-COPY echopages/frontend/package*.json ./
+COPY frontend/package*.json ./
 RUN npm install
-COPY echopages/frontend/ ./
+COPY frontend/ ./
 RUN npm run build
 
 # Stage 2: Build Backend
@@ -23,6 +23,6 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
 COPY echopages echopages
-COPY --from=build-frontend /app/build echopages/frontend/build
+COPY --from=build-frontend /app/build frontend/build
 
 CMD ["python3", "-m", "echopages.main"]
