@@ -22,7 +22,7 @@ services:
       - ${ECHOPAGES_DATA_DIR}:/app/data # Local path where the data will be stored
     restart: always
     networks:
-      - web
+      - echopages
 
   traefik:
     image: traefik:v2.5
@@ -41,8 +41,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${ECHOPAGES_DATA_DIR}/traefik/letsencrypt:/letsencrypt
     networks:
-      - web
+      - echopages
 
 networks:
-  web:
+  echopages:
     external: true

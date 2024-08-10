@@ -76,5 +76,6 @@ jobs:
             echo 'POSTMARK_SERVER_API_TOKEN=${{ secrets.POSTMARK_SERVER_API_TOKEN }}' >> ~/echopages/production.env;
             echo 'RECIPIENT_EMAIL=${{ secrets.RECIPIENT_EMAIL }}' >> ~/echopages/production.env;
             docker pull pachovit/echopages:latest;
+            docker network create echopages || true
             docker compose -f ~/echopages/docker-compose.yml --env-file ~/echopages/production.env up -d;
           "
