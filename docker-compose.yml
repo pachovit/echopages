@@ -2,6 +2,11 @@ services:
   echopages:
     image: pachovit/echopages:latest
     container_name: echopages
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fastapi.rule=Host(`${TRAEFIK_DOMAIN}`)"
+      - "traefik.http.routers.fastapi.entrypoints=websecure"
+      - "traefik.http.routers.fastapi.tls.certresolver=myresolver"
     ports:
       - "8000:8000"
     environment:
@@ -16,3 +21,28 @@ services:
     volumes:
       - ${ECHOPAGES_DATA_DIR}:/app/data # Local path where the data will be stored
     restart: always
+    networks:
+      - web
+
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${ECHOPAGES_DATA_DIR}/traefik/letsencrypt:/letsencrypt
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

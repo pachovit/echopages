@@ -1,0 +1,18 @@
+services:
+  echopages:
+    image: pachovit/echopages:latest
+    container_name: echopages
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ=${TZ}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - APP_EMAIL_ADDRESS=${APP_EMAIL_ADDRESS}
+      - POSTMARK_SERVER_API_TOKEN=${POSTMARK_SERVER_API_TOKEN}
+      - RECIPIENT_EMAIL=${RECIPIENT_EMAIL}
+      - NUMBER_OF_UNITS_PER_DIGEST=${NUMBER_OF_UNITS_PER_DIGEST}
+      - DAILY_TIME_OF_DIGEST=${DAILY_TIME_OF_DIGEST}
+    user: "${UID}:${GID}"
+    volumes:
+      - ${ECHOPAGES_DATA_DIR}:/app/data # Local path where the data will be stored
+    restart: always
