@@ -2,10 +2,10 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from pytest_bdd import given, scenario, then, when
 
-from echopages.api import endpoints
+from echopages.main import app
 
-client = TestClient(endpoints.app)
-host_url = "http://127.0.0.1:8000"
+client = TestClient(app)
+host_url = "http://127.0.0.1:8000/api"
 
 
 @scenario("trigger_digest.feature", "Successfully trigger a digest")

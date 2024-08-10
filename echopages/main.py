@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime
-from typing import Dict, Union
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI
@@ -27,7 +27,7 @@ app.mount(
 
 # Serve the React app's entry point (index.html)
 @app.get("/{full_path:path}")
-async def serve_react_app(full_path: str) -> Union[FileResponse, Dict[str, str]]:
+async def serve_react_app(full_path: str) -> Any:
     index_file = os.path.join("echopages/frontend/build", "index.html")
     if not os.path.isfile(index_file):
         return {"error": "React frontend not built or incorrect path provided"}

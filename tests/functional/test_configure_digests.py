@@ -3,10 +3,10 @@ from typing import Any, Dict
 from fastapi.testclient import TestClient
 from pytest_bdd import given, scenario, then, when
 
-from echopages.api import endpoints
+from echopages.main import app
 
-client = TestClient(endpoints.app)
-host_url = "http://127.0.0.1:8000"
+client = TestClient(app)
+host_url = "http://127.0.0.1:8000/api"
 
 
 @scenario("configure_digests.feature", "Successfully reconfigure a digest")

@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from pytest_bdd import given, parsers, scenario, then, when
 
-from echopages.api.endpoints import app
+from echopages.main import app
 
 client = TestClient(app)
 
@@ -44,7 +44,7 @@ def given_content(source: str, author: str, location: str, text: str) -> Dict[st
 
 @when("I add the content", target_fixture="content_id")
 def add_content(content_metadata: Dict[str, str]) -> int:
-    response = client.post("/add_content", json=content_metadata)
+    response = client.post("/api/add_content", json=content_metadata)
     assert response.status_code == 201
     content_id = int(response.json()["content_id"])
     return content_id
@@ -54,7 +54,7 @@ def add_content(content_metadata: Dict[str, str]) -> int:
 def step_and_content_should_be_retrievable(
     content_metadata: Dict[str, str], content_id: int
 ) -> None:
-    response = client.get(f"/contents/{content_id}")
+    response = client.get(f"/api/contents/{content_id}")
     assert response.status_code == 200
     for key, value in content_metadata.items():
         assert response.json()[key] == value
@@ -84,7 +84,7 @@ def given_content_missing_text(
 
 @when("I add the content without text", target_fixture="failed_response")
 def add_content_missing_text(content_metadata_without_text: Dict[str, str]) -> Response:
-    response = client.post("/add_content", json=content_metadata_without_text)
+    response = client.post("/api/add_content", json=content_metadata_without_text)
     return response
 
 
